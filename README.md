@@ -1,5 +1,5 @@
 # Rotation Matrix of Real Spherical Harmonics
-This repo contains a script to calculate the rotation matrix to real spherical harmonics ($Y_{lm}$) under the [real-space rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix)($R$).
+This repo contains a script to calculate the rotation matrix to real spherical harmonics ($Y_{lm}$) under the [real-space rotation matrix](https://en.wikipedia.org/wiki/Rotation_matrix) ($R$).
 
 I.e. the rotated real spherical harmonics ($\tilde Y_{lm}$) can be expressed as a linear combination of the original real spherical harmonics ($Y_{lm}$),
 
@@ -33,7 +33,7 @@ print(R)
 ```
 
 ## Result Checker
-See `plot_rotated_orbitals.nb`.
+See `plot_rotated_orbitals.nb` (Mathematica Notebook).
 
 ## Use Case
 In normal DFT codes, orbital projections are usually done with real atomic orbitals that are oriented on the canonical Cartesian axes. 
