@@ -36,7 +36,7 @@ with `pyband -y -2 12 -z 0 --occ '1' --spd '6'`.
 
 We can use the transformation matrix generated with `rotsph` code to obtain the
 optimally rotated projected bandstructure. For this to work, we need to run VASP
-with `IORBIT=12` (so that the actual projection coeffs along with its phase 
+with `LORBIT=12` (so that the actual projection coeffs along with its phase 
 factors are printed out).
 
 <img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/BTO/images/band_rotsph.png?raw=true" width="50%" height="50%">
@@ -44,10 +44,10 @@ factors are printed out).
 #### Steps to reproduce
 0. go to `diag` dir.
 1. run a single-point calculation in `scf` folder to get `CHGCAR`.
-2. copy `CHGCAR` to `band` folder and run VASP again.
-3. copy `rot_pband.py` to `band` folder.
-4. run `export PYTHONPATH="${PYTHONPATH}:/path/to/repo"`     
-5. run `python rot_pband.py`.
+2. copy `CHGCAR` to `band` folder, change `LORBIT=11` to `LORBIT=12` and run VASP again.
+4. copy `rot_pband.py` to `band` folder.
+5. run `export PYTHONPATH="${PYTHONPATH}:/path/to/repo"`     
+6. run `python rot_pband.py`.
 
 *Please take a look into the `rot_pband.py` file and make sure you understand
 what is going on.*
