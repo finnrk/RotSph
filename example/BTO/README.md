@@ -9,7 +9,7 @@ one with the c-axis aligned along the [1,1,1] direction ("diag").
 Using canonical projection, for the orth structure, we obtain the following
 projected band structure:
 
-<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/BTO/images/band_diag.png?raw=true" width="50%" height="50%">
+<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/BTO/images/band_orth.png?raw=true" width="50%" height="50%">
 
 And if we plot the wavefunction of #25 band at $\Gamma$ point, we see that it
 indeed is a $d_{z^2}$ orbtial oriented along the z-direction:
