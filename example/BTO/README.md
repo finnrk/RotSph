@@ -37,7 +37,7 @@ with `pyband -y -2 12 -z 0 --occ '1' --spd '6'`.
 We can use the transformation matrix generated with `rotsph` code to obtain the
 optimally rotated projected bandstructure. For this to work, we need to run VASP
 with `IORBIT=12` (so that the actual projection coeffs along with its phase 
-factors are printed out.
+factors are printed out).
 
 <img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/BTO/images/band_rotsph.png?raw=true" width="50%" height="50%">
 
