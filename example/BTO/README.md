@@ -9,17 +9,17 @@ one with the c-axis aligned along the [1,1,1] direction ("diag").
 Using canonical projection, for the orth structure, we obtain the following
 projected band structure:
 
-<img src="https://raw.githubusercontent.com/Chengcheng-Xiao/RotSph/dev/example/BTO/images/band_orth.png" width="50%" height="50%">
+<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/BTO/images/band_diag.png?raw=true" width="50%" height="50%">
 
 And if we plot the wavefunction of #25 band at $\Gamma$ point, we see that it
 indeed is a $d_{z^2}$ orbtial oriented along the z-direction:
 
-<img src="https://raw.githubusercontent.com/Chengcheng-Xiao/RotSph/dev/example/BTO/images/wfc_25_gamma.png" width="50%" height="50%">
+<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/BTO/images/wfc_25_gamma.png?raw=true" width="50%" height="50%">
 
 Now if we run the same calculation but with the diag structure, we see
 completely different projected band structure:
 
-<img src="https://raw.githubusercontent.com/Chengcheng-Xiao/RotSph/dev/example/BTO/images/band_diag.png" width="50%" height="50%">
+<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/BTO/images/band_diag.png?raw=true" width="50%" height="50%">
 
 But if we plot the wavefunction of #25 band at $\Gamma$ point, the $d_{z^2}$
 feature is still there.
@@ -39,7 +39,7 @@ optimally rotated projected bandstructure. For this to work, we need to run VASP
 with `IORBIT=12` (so that the actual projection coeffs along with its phase 
 factors are printed out.
 
-<img src="https://raw.githubusercontent.com/Chengcheng-Xiao/RotSph/dev/example/BTO/images/band_rotsph.png" width="50%" height="50%">
+<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/BTO/images/band_rotsph.png?raw=true" width="50%" height="50%">
 
 #### Steps to reproduce
 0. go to `orth` dir.
