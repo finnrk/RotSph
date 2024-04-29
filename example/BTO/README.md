@@ -42,7 +42,7 @@ factors are printed out).
 <img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/BTO/images/band_rotsph.png?raw=true" width="50%" height="50%">
 
 #### Steps to reproduce
-0. go to `orth` dir.
+0. go to `diag` dir.
 1. run a single-point calculation in `scf` folder to get `CHGCAR`.
 2. copy `CHGCAR` to `band` folder and run VASP again.
 3. copy `rot_pband.py` to `band` folder.
