@@ -110,8 +110,8 @@ def reorder_rot(rot_mat):
     #e.g., rot_mat=np.matrix([[0,0,1],[0,1,0],[1,0,0]])
     # first we renormalize rot_mat
     rot_mat = rot_mat/np.linalg.norm(rot_mat,axis=1)
-    # NOTE: a weird convention is used in the origianl paper
-    # NOTE: , need to transpose traditional rotation matrix.
+    # NOTE: a weird convention is used in the original paper
+    # NOTE: here we transpose traditional rotation matrix.
     rot_mat = rot_mat.T
     # NOTE: Also, need to some axes: xyz -> yzx
     rot = {
@@ -143,8 +143,8 @@ def get_R_mat(l, rot_mat):
               ...
     Order taken from: https://en.wikipedia.org/wiki/Table_of_spherical_harmonics#Real_spherical_harmonics
 
-    The rotated orbtial under original fram \hat{Y}:
-    \hat{Y_m'} = \sum_{m} Y_m R_{mm'}
+    The rotated orbtial (\hat{Y_m}) can be constructed from the original orbital (Y_m) as follows:
+    \hat{Y_m} = \sum_{m} R_{mm'} Y_m' 
     '''
     rot = reorder_rot(rot_mat)
     # l = 2
