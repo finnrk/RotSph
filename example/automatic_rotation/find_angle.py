@@ -93,7 +93,7 @@ def read_PROCAR12(file_path,report=False):
 #---------------------------------------
 def get_max(proj_data, atom_idx=0, orbital='d', alpha=0, beta=0, gamma=0, half_range=10, dtheta=1):
 
-    # sensible range
+    # sensible range: https://en.wikipedia.org/wiki/Euler_angles#Signs,_ranges_and_conventions
     if half_range >= 180:
         half_range = 180
         # y angle only needs to be -90 to 90
@@ -119,15 +119,10 @@ def get_max(proj_data, atom_idx=0, orbital='d', alpha=0, beta=0, gamma=0, half_r
                 # generate transformation matrix
                 #---------------------------------------
                 #  print('Generating transformation matrix...')
-                #  z_angle = 0.0
-                #  z_angle = -np.pi/4.
                 rot_z =np.array([[np.cos(z_angle),-np.sin(z_angle),0],\
                         [np.sin(z_angle),np.cos(z_angle),0],[0,0,1]])
-                #  y_angle = 0
                 rot_y=np.array([[np.cos(y_angle),0,np.sin(y_angle)],[0,1,0],\
                         [-np.sin(y_angle),0,np.cos(y_angle)]])
-                #  x_angle = 0.0
-                #  x_angle = np.arctan(2**0.5/1)
                 rot_x=np.array([[1,0,0],[0,np.cos(x_angle),-np.sin(x_angle)],\
                         [0,np.sin(x_angle),np.cos(x_angle)]])
 
@@ -148,27 +143,18 @@ def get_max(proj_data, atom_idx=0, orbital='d', alpha=0, beta=0, gamma=0, half_r
                     T_mat = rotsph.get_R_mat(1,rot_mat)
                     # extract the weight of d orbitals (4:10) of the first atom (0)
                     weight_rotated_atom = proj_data[:,:,atom_idx,1:4]
-                    # extract T_mat colum for dz (2)
-                    # we just need to fit one orbtial at gamma to get the optimum rotation
-                    #  T_mat = T_mat[1,:]
                 elif orbital == 'd':
                     assert proj_data.shape[3] >= 9
                     # get the transformation matrix for d orbitals
                     T_mat = rotsph.get_R_mat(2,rot_mat)
                     # extract the weight of d orbitals (4:10) of the first atom (0)
                     weight_rotated_atom = proj_data[:,:,atom_idx,4:9]
-                    # extract T_mat colum for dz (2)
-                    # we just need to fit one orbtial at gamma to get the optimum rotation
-                    #  T_mat = T_mat[2,:]
                 elif orbital == 'f':
                     assert proj_data.shape[3] >= 16
                     # get the transformation matrix for d orbitals
                     T_mat = rotsph.get_R_mat(3,rot_mat)
                     # extract the weight of d orbitals (4:10) of the first atom (0)
                     weight_rotated_atom = proj_data[:,:,atom_idx,9:16]
-                    # extract T_mat colum for dz (2)
-                    # we just need to fit one orbtial at gamma to get the optimum rotation
-                    #  T_mat = T_mat[3,:]
 
                 # perform the rotation
                 weight_rotated = np.einsum('ijl,kl',weight_rotated_atom,T_mat)
