@@ -1,0 +1,41 @@
+num_wann        =  3
+num_bands       =  3
+num_iter        = 0
+exclude_bands:1-20,24-40
+#exclude_bands:1-23
+
+#dis_win_min = -2
+#dis_win_max = 12
+#dis_froz_min = -2
+#dis_froz_max = 8
+
+#begin projections
+#Ti:dxy
+#Ti:dyz
+#end projections
+
+begin projections
+Ti:dz2
+Ti:dxz
+Ti:dx2-y2
+end projections
+
+wannier_plot = true
+wannier_plot_list = 1 2 3
+wannier_plot_supercell = 1 1 1
+
+#restart = plot
+bands_plot = true
+bands_num_points = 1000
+bands_plot_format = gnuplot
+
+kpath = true
+kpath_task = bands
+#kpath_bands_colour = spin
+kpath_num_points=500
+begin kpoint_path
+G 0.00000  0.00000 0.0000 Y 0.50000  0.00000 0.0000
+Y 0.50000  0.00000 0.0000 M 0.50000  0.50000 0.0000
+M 0.50000  0.50000 0.0000 K 0.50000  0.50000 0.5000
+K 0.50000  0.50000 0.5000 G 0.00000  0.00000 0.0000
+end kpoint_path

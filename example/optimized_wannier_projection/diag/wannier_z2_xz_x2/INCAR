@@ -1,0 +1,43 @@
+ SYSTEM = BaTiO3 
+Startparameter for this Run:
+   NWRITE =      1;   LPETIM=F    write-flag & time
+   ISTART =      0    job   : 0-new  1-cont  2-samecu
+   LWAVE = T
+   LCHARG = T 
+#  ICHARG=1
+
+Additional parameters
+#   DIPOL = 0.5 0.5 0.5
+#   LCALCPOL = .T.
+#   ISYM=-1
+#   LWANNIER90=.T.
+
+Electronic Relaxation 1
+   NELM   =    200
+   NELMIN =   3
+   EDIFFG = -0.001
+   EDIFF  = 1E-8
+   PREC   =  A 
+   NBANDS = 40
+ Ionic Relaxation
+   NSW    =  0   for static cal/.
+   NBLOCK =      1 ;   KBLOCK =      5    inner block; outer block 
+   IBRION =   -1  ionic relax: 0-MD 1-quasi-New 2-CG
+   POTIM  =  0.5
+   LCORR  =      T    Harris-correction to forces
+   ENCUT  = 500  
+
+LWANNIER90 = .TRUE.
+LWRITE_UNK = .TRUE.
+
+ DOS related values:
+   ISMEAR = -5
+#  SIGMA = 0.05
+  EMIN=-15
+  EMAX=15
+  LORBIT=11
+  NEDOS=3000
+ Electronic Relaxation 2
+   ALGO  =     N ! Normal     algorithm
+   LDIAG  =      T    sub-space diagonalisation
+   LREAL = F
