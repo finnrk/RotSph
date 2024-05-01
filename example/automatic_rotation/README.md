@@ -1,4 +1,4 @@
-## automatic rotation [BaTiO₃]
+## Automatic rotation [BaTiO₃]
 
 Just like in the manual rotation, here we have two BaTiO₃ structures, one with 
 c-axis aligned along the z-direction ("_orth_") and the other with the c-axis 
@@ -45,7 +45,7 @@ With the _diag_ structure, we have
 <img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/automatic_rotation/images/band_diag.png?raw=true" width="50%" height="50%">
 </p>
 
-Now, using `find_angles.py` file, we get the following Eular angles:
+Now, using `find_angles.py` file (`python find_angles.py 0 d`), we get the following Eular angles:
 ```
    Eular_alpha:  135.50 degrees
    Eular_beta :  -54.75 degrees
@@ -53,10 +53,10 @@ Now, using `find_angles.py` file, we get the following Eular angles:
 ```
 
 And with these angles, we can re-calculate the projected band structures using
-`rot_pband_plot.py`. And we get:
+`rot_pband_plot.py` (`python rot_pband_plot.py 0 4 135.5 -54.75 -180.50`). And we get:
 
 <p align="center">
-<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/automatic_rotation/images/band_rot.png?raw=true" width="50%" height="50%">
+<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/automatic_rotation/images/band_rotsph.png?raw=true" width="50%" height="50%">
 </p>
 
 Comparing our rotated projected band structrue to the one we got for the _orth_

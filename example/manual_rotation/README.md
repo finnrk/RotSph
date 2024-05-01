@@ -1,4 +1,4 @@
-## BaTiO₃
+## Manual rotation [BaTiO₃]
 
 ### Problem
 
