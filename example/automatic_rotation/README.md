@@ -60,7 +60,7 @@ And with these angles, we can re-calculate the projected band structures using
 </p>
 
 Comparing our rotated projected band structrue to the one we got for the _orth_
-structure, we realize that $d_xz$ and $d_yz$ swapped places. But this is fine as
+structure, we realize that $d_{xz}$ and $d_{yz}$ swapped places. But this is fine as
 they are symmetry-related.
 
 #### Steps to reproduce
