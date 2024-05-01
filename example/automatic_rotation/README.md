@@ -47,21 +47,22 @@ With the _diag_ structure, we have
 
 Now, using `find_angles.py` file (`python find_angles.py 0 d`), we get the following Eular angles:
 ```
-   Eular_alpha:  135.50 degrees
-   Eular_beta :  -54.75 degrees
-   Eular_gamma:  -180.50 degrees
+   Eular_alpha:  -135.00 degrees
+   Eular_beta :   0.00 degrees
+   Eular_gamma:  -54.75 degrees
 ```
 
 And with these angles, we can re-calculate the projected band structures using
-`rot_pband_plot.py` (`python rot_pband_plot.py 0 4 135.5 -54.75 -180.50`). And we get:
+`rot_pband_plot.py` (`python rot_pband_plot.py 0 4 -135 0.00 -54.75`). And we get:
 
 <p align="center">
 <img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/automatic_rotation/images/band_rotsph.png?raw=true" width="50%" height="50%">
 </p>
 
-Comparing our rotated projected band structrue to the one we got for the _orth_
-structure, we realize that $d_{xz}$ and $d_{yz}$ swapped places. But this is fine as
-they are symmetry-related.
+We see that the canonical orbtial features are fully recovered.
+<!-- Comparing our rotated projected band structrue to the one we got for the _orth_ -->
+<!-- structure, we realize that $d_{xz}$ and $d_{yz}$ swapped places. But this is fine as -->
+<!-- they are symmetry-related. -->
 
 #### Steps to reproduce
 0. go to `diag` dir.

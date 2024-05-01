@@ -113,7 +113,7 @@ def get_max(proj_data, atom_idx=0, orbital='d', alpha=0, beta=0, gamma=0, half_r
     data_tmp=[]
 
     for z_angle in np.linspace(z1_1,z1_2,2*int(half_range/dtheta)+1):
-        for y_angle in np.linspace(z2_1,z2_2,2*int(half_range/dtheta)+1):
+        for y_angle in np.linspace(z2_1,z2_2,2*int(half_range_y/dtheta)+1):
             for x_angle in np.linspace(z3_1,z3_2,2*int(half_range/dtheta)+1):
                 #---------------------------------------
                 # generate transformation matrix
