@@ -56,6 +56,10 @@ coefficients to get the projection coefficients on the rotated frame.
 I.e., get projection coefficients obtained by projecting wavefunctions on to 
 atomic orbitals on the rotated frame.
 
+This feature has been implemented (see example/manual_rotation) and an routine
+that performes automatic search of the best Eular angles is also implemented
+(see example/automatic_rotation).
+
 ## Disclaimer
 The correctness of this code has not been thoroughly tested.
 Make sure you KNOW WHAT YOU ARE DOING!
