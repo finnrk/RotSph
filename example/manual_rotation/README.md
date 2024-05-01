@@ -11,21 +11,21 @@ Using canonical projection, for the orth structure, we obtain the following
 projected band structure:
 
 <p align="center">
-<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/manual_rotation/images/band_orth.png?raw=true" width="50%" height="50%">
+<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/manual_rotation/images/band_orth.png?raw=true" width="25%" height="25%">
 </p>
 
 And if we plot the wavefunction of #25 band at $\Gamma$ point, we see that it
 indeed is a $d_{z^2}$ orbital oriented along the z-direction:
 
 <p align="center">
-<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/manual_rotation/images/wfc_25_gamma.png?raw=true" width="50%" height="50%">
+<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/manual_rotation/images/wfc_25_gamma.png?raw=true" width="25%" height="25%">
 </p>
 
 Now if we run the same calculation but with the _diag_ structure, we get a
 completely different projected band structure:
 
 <p align="center">
-<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/manual_rotation/images/band_diag.png?raw=true" width="50%" height="50%">
+<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/manual_rotation/images/band_diag.png?raw=true" width="25%" height="25%">
 </p>
 
 But if we plot the wavefunction of #25 band at $\Gamma$ point, the $d_{z^2}$
@@ -70,7 +70,7 @@ The resulting projected band sturctures calculated using the _diag_ structure no
 looks exactly like the one calculated using the _orth_ structure:
 
 <p align="center">
-<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/manual_rotation/images/band_rotsph.png?raw=true" width="50%" height="50%">
+<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/manual_rotation/images/band_rotsph.png?raw=true" width="25%" height="25%">
 </p>
 
 #### Steps to reproduce
