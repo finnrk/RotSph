@@ -2,12 +2,18 @@ import numpy as np
 
 #% build small u, v, w
 def delta(i,j):
+    '''
+    kronecker delta function.
+    '''
     if i == j:
         return 1
     else:
         return 0
 
 def u_mat(l,m,m_):
+    '''
+    Calculate u matrix.
+    '''
     assert type(l) is int;
     assert type(m) is int;
     assert type(m_) is int;
@@ -21,6 +27,9 @@ def u_mat(l,m,m_):
         exit()
 
 def v_mat(l,m,m_):
+    '''
+    Calculate v matrix.
+    '''
     assert type(l) is int;
     assert type(m) is int;
     assert type(m_) is int;
@@ -34,6 +43,9 @@ def v_mat(l,m,m_):
         exit()
 
 def w_mat(l,m,m_):
+    '''
+    Calculate w matrix.
+    '''
     assert type(l) is int;
     assert type(m) is int;
     assert type(m_) is int;
@@ -48,7 +60,9 @@ def w_mat(l,m,m_):
 
 #% build big U V W
 def p_mat(i,l,mu,m_, rot):
-    # print("p")
+    '''
+    Calculate p matrix element.
+    '''
     if np.abs(m_) < l:
         return rot[i][0]*R_mat(l-1,mu,m_, rot)
     elif m_==l:
@@ -59,6 +73,8 @@ def p_mat(i,l,mu,m_, rot):
             # abs(m_-1) and abs(m_-1)) are larger than l.
             return 0
         else:
+            # P functions defeined Table 1 for m'=l is not correct.
+            # The correct form can be found in Eq. 7.4a.
             return rot[i][1]*R_mat(l-1,mu,m_-1, rot)-rot[i][-1]*R_mat(l-1,mu,-m_+1, rot)
     elif m_==-l:
         if (np.abs(mu)>l-1 or np.abs(m_+1)>l-1 or np.abs(-m_-1)>l-1):
@@ -68,10 +84,14 @@ def p_mat(i,l,mu,m_, rot):
             # abs(m_-1) and abs(m_-1)) are larger than l.
             return 0
         else:
+            # P functions defeined Table 1 for m'=l is not correct.
+            # The correct form can be found in Eq. 7.4b.
             return rot[i][1]*R_mat(l-1,mu,m_+1, rot)+rot[i][-1]*R_mat(l-1,mu,-m_-1, rot)
 
 def bU_mat(l,m,m_, rot):
-    # print("U")
+    '''
+    Calculate big U matrix.
+    '''
     if m==0:
         return p_mat(0,l,0,m_, rot)
     elif m>0:
@@ -80,7 +100,9 @@ def bU_mat(l,m,m_, rot):
         return p_mat(0,l,m,m_, rot)
 
 def bV_mat(l,m,m_, rot):
-    # print("V")
+    '''
+    Calculate big V matrix.
+    '''
     if m==0:
         return p_mat(1,l,1,m_, rot) + p_mat(-1,l,-1,m_, rot)
     elif m>0:
@@ -91,7 +113,9 @@ def bV_mat(l,m,m_, rot):
                p_mat(-1,l,-m-1,m_, rot)*(1+delta(m,-1))**0.5
 
 def bW_mat(l,m,m_, rot):
-    # print("W")
+    '''
+    Calculate big W matrix.
+    '''
     if m==0:
         return 0
     elif m>0:
@@ -101,6 +125,9 @@ def bW_mat(l,m,m_, rot):
 
 #% recursive function
 def R_mat(l,m,m_, rot):
+    '''
+    Recursively calculate transformation matrix.
+    '''
     if l==0:
         return 1
     elif l==1:
@@ -115,7 +142,10 @@ def R_mat(l,m,m_, rot):
 
 #%
 def reorder_rot(rot_mat):
-    #e.g., rot_mat=np.matrix([[0,0,1],[0,1,0],[1,0,0]])
+    '''
+    Normalize and reorder the input rotation matrix:
+    e.g., [[1,0,0],[0,1,0],[0,0,1]] -> [[0,0,1],[0,1,0],[1,0,0]]
+    '''
     # first we renormalize rot_mat
     rot_mat = rot_mat/np.linalg.norm(rot_mat,axis=1)
     # Note: rotation matrix is defined as
@@ -163,7 +193,7 @@ def get_R_mat(l, rot_mat):
     Order taken from: https://en.wikipedia.org/wiki/Table_of_spherical_harmonics#Real_spherical_harmonics
 
     The rotated orbtial (\hat{Y_m}) can be constructed from the original orbital (Y_m) as follows:
-    \hat{Y_m} = \sum_{m} R_{mm'} Y_m' 
+    \hat{Y_m} = \sum_{m'} R_{mm'} Y_m' 
     '''
     rot = reorder_rot(rot_mat)
     # l = 2
