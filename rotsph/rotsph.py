@@ -1,10 +1,13 @@
 import numpy as np
+# REF: J. Phys. Chem. 1996, 100, 15, 6342–634
 
 #% build small u, v, w
 def delta(i,j):
     '''
     kronecker delta function.
     '''
+    assert type(i) is int;
+    assert type(j) is int;
     if i == j:
         return 1
     else:
@@ -63,6 +66,11 @@ def p_mat(i,l,mu,m_, rot):
     '''
     Calculate p matrix element.
     '''
+    assert type(i) is int;
+    assert type(l) is int;
+    assert type(mu) is int;
+    assert type(m_) is int;
+    
     if np.abs(m_) < l:
         return rot[i][0]*R_mat(l-1,mu,m_, rot)
     elif m_==l:
@@ -92,6 +100,10 @@ def bU_mat(l,m,m_, rot):
     '''
     Calculate big U matrix.
     '''
+    assert type(l) is int;
+    assert type(m) is int;
+    assert type(m_) is int;
+    
     if m==0:
         return p_mat(0,l,0,m_, rot)
     elif m>0:
@@ -103,6 +115,10 @@ def bV_mat(l,m,m_, rot):
     '''
     Calculate big V matrix.
     '''
+    assert type(l) is int;
+    assert type(m) is int;
+    assert type(m_) is int;
+    
     if m==0:
         return p_mat(1,l,1,m_, rot) + p_mat(-1,l,-1,m_, rot)
     elif m>0:
@@ -146,22 +162,30 @@ def reorder_rot(rot_mat):
     Normalize and reorder the input rotation matrix:
     e.g., [[1,0,0],[0,1,0],[0,0,1]] -> [[0,0,1],[0,1,0],[1,0,0]]
     '''
+    assert np.allclose(np.dot(rot_mat.T, rot_mat), np.eye(3)) == True, \
+        'ERROR: rot_mat is not unitary.'
+    
     # first we renormalize rot_mat
     rot_mat = rot_mat/np.linalg.norm(rot_mat,axis=1)
+    
     # Note: rotation matrix is defined as
     #                                (r_00, r_01, r_02)
     #        (x', y', z') = (x, y, z)|r_10, r_11, r_12|
     #                                (r_20, r_21, r_22)
-    #       However, our input is so that we can write:
-    #        (a1', b1', c1')   (r'_00, r'_01, r'_02)(a1, a2, a3)
-    #        (a2', b2', c2') = |r'_10, r'_11, r'_12||b1, b2, b3| 
-    #        (a3', b3', c3')   (r'_20, r'_21, r'_22)(c1, c2, c3) 
-    #       or, in other words:
+    #       However, our input rotation mat is is so that:
     #        (a1')   (r'_00, r'_01, r'_02)(a1)
     #        (a2') = |r'_10, r'_11, r'_12||a2|
     #        (a3')   (r'_20, r'_21, r'_22)(a3)
-    #       hence, a transpose is needed here: r=r'.T
+    #       I.e., np.dot(rot_mat, lat_mat.T) = new_lat_mat.T
+    #       Or:
+    #        (a1', b1', c1')   (r'_00, r'_01, r'_02)(a1, b2, c3)
+    #        (a2', b2', c2') = |r'_10, r'_11, r'_12||a2, b2, c3| 
+    #        (a3', b3', c3')   (r'_20, r'_21, r'_22)(a3, b2, c3) 
+    # 
+    #       Because of this, a transpose is needed to translate
+    #       r' to r. 
     rot_mat = rot_mat.T
+    
     # NOTE: Also, in REF, the axes are re-ordered: xyz -> yzx
     rot = {
         -1: {
