@@ -53,11 +53,19 @@ def p_mat(i,l,mu,m_, rot):
         return rot[i][0]*R_mat(l-1,mu,m_, rot)
     elif m_==l:
         if (np.abs(mu)>l-1 or np.abs(m_-1)>l-1 or np.abs(-m_+1)>l-1):
+            # In REF, mu and m_ are allowed to be larger than l.
+            # However, Eq. (2.5b) in REF, if m is larger than l, P_l^m(t) = 0
+            # hence we are setting everything to zero if abs(mu) or 
+            # abs(m_-1) and abs(m_-1)) are larger than l.
             return 0
         else:
             return rot[i][1]*R_mat(l-1,mu,m_-1, rot)-rot[i][-1]*R_mat(l-1,mu,-m_+1, rot)
     elif m_==-l:
         if (np.abs(mu)>l-1 or np.abs(m_+1)>l-1 or np.abs(-m_-1)>l-1):
+            # In REF, mu and m_ are allowed to be larger than l.
+            # However, Eq. (2.5b) in REF, if m is larger than l, P_l^m(t) = 0
+            # hence we are setting everything to zero if abs(mu) or 
+            # abs(m_-1) and abs(m_-1)) are larger than l.
             return 0
         else:
             return rot[i][1]*R_mat(l-1,mu,m_+1, rot)+rot[i][-1]*R_mat(l-1,mu,-m_-1, rot)
@@ -110,10 +118,21 @@ def reorder_rot(rot_mat):
     #e.g., rot_mat=np.matrix([[0,0,1],[0,1,0],[1,0,0]])
     # first we renormalize rot_mat
     rot_mat = rot_mat/np.linalg.norm(rot_mat,axis=1)
-    # NOTE: a weird convention is used in the original paper
-    # NOTE: here we transpose traditional rotation matrix.
+    # Note: rotation matrix is defined as
+    #                                (r_00, r_01, r_02)
+    #        (x', y', z') = (x, y, z)|r_10, r_11, r_12|
+    #                                (r_20, r_21, r_22)
+    #       However, our input is so that we can write:
+    #        (a1', b1', c1')   (r'_00, r'_01, r'_02)(a1, a2, a3)
+    #        (a2', b2', c2') = |r'_10, r'_11, r'_12||b1, b2, b3| 
+    #        (a3', b3', c3')   (r'_20, r'_21, r'_22)(c1, c2, c3) 
+    #       or, in other words:
+    #        (a1')   (r'_00, r'_01, r'_02)(a1)
+    #        (a2') = |r'_10, r'_11, r'_12||a2|
+    #        (a3')   (r'_20, r'_21, r'_22)(a3)
+    #       hence, a transpose is needed here: r=r'.T
     rot_mat = rot_mat.T
-    # NOTE: Also, need to some axes: xyz -> yzx
+    # NOTE: Also, in REF, the axes are re-ordered: xyz -> yzx
     rot = {
         -1: {
             -1: rot_mat[1,1],
