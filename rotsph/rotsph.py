@@ -73,7 +73,7 @@ def p_mat(i,l,mu,m_, rot):
             # abs(m_-1) and abs(m_-1)) are larger than l.
             return 0
         else:
-            # P functions defeined Table 1 for m'=l is not correct.
+            # P functions defined in Table 1 for m'=l is not correct.
             # The correct form can be found in Eq. 7.4a.
             return rot[i][1]*R_mat(l-1,mu,m_-1, rot)-rot[i][-1]*R_mat(l-1,mu,-m_+1, rot)
     elif m_==-l:
@@ -84,7 +84,7 @@ def p_mat(i,l,mu,m_, rot):
             # abs(m_-1) and abs(m_-1)) are larger than l.
             return 0
         else:
-            # P functions defeined Table 1 for m'=l is not correct.
+            # P functions defined in Table 1 for m'=-l is not correct.
             # The correct form can be found in Eq. 7.4b.
             return rot[i][1]*R_mat(l-1,mu,m_+1, rot)+rot[i][-1]*R_mat(l-1,mu,-m_-1, rot)
 
