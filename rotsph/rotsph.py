@@ -38,9 +38,17 @@ def v_mat(l,m,m_):
     assert type(m_) is int;
     #
     if np.abs(m_) < l:
-        return 0.5*(((1+delta(m,0))*(l+np.abs(m)-1)*(l+np.abs(m)))/((l+m_)*(l-m_)))**0.5*(1-2*delta(m,0))
+        return 0.5*( \
+                   ((1+delta(m,0))*(l+np.abs(m)-1)*(l+np.abs(m))) \
+                   /((l+m_)*(l-m_)) \
+                   )**0.5 \
+                  *(1-2*delta(m,0))
     elif np.abs(m_) == l:
-        return 0.5*(((1+delta(m,0))*(l+np.abs(m)-1)*(l+np.abs(m)))/(2*l*(2*l-1)))**0.5*(1-2*delta(m,0))
+        return 0.5*(\
+                   ((1+delta(m,0))*(l+np.abs(m)-1)*(l+np.abs(m))) \
+                   /(2*l*(2*l-1))\
+                   )**0.5 \
+                  *(1-2*delta(m,0))
     else:
         print('Error in generating v_matrix');
         exit()
@@ -54,9 +62,11 @@ def w_mat(l,m,m_):
     assert type(m_) is int;
     #
     if np.abs(m_) < l:
-        return -0.5*(((l-np.abs(m)-1)*(l-np.abs(m)))/((l+m_)*(l-m_)))**0.5*(1-delta(m,0))
+        return -0.5*(((l-np.abs(m)-1)*(l-np.abs(m)))/((l+m_)*(l-m_)))**0.5 \
+                   *(1-delta(m,0))
     elif np.abs(m_) == l:
-        return -0.5*(((l-np.abs(m)-1)*(l-np.abs(m)))/(2*l*(2*l-1)))**0.5*(1-delta(m,0))
+        return -0.5*(((l-np.abs(m)-1)*(l-np.abs(m)))/(2*l*(2*l-1)))**0.5 \
+                   *(1-delta(m,0))
     else:
         print('Error in generating v_matrix');
         exit()
@@ -83,7 +93,8 @@ def p_mat(i,l,mu,m_, rot):
         else:
             # P functions defined in Table 1 for m'=l is not correct.
             # The correct form can be found in Eq. 7.4a.
-            return rot[i][1]*R_mat(l-1,mu,m_-1, rot)-rot[i][-1]*R_mat(l-1,mu,-m_+1, rot)
+            return rot[i][1]*R_mat(l-1,mu,m_-1, rot) \
+                  -rot[i][-1]*R_mat(l-1,mu,-m_+1, rot)
     elif m_==-l:
         if (np.abs(mu)>l-1 or np.abs(m_+1)>l-1 or np.abs(-m_-1)>l-1):
             # In REF, mu and m_ are allowed to be larger than l.
@@ -94,7 +105,8 @@ def p_mat(i,l,mu,m_, rot):
         else:
             # P functions defined in Table 1 for m'=-l is not correct.
             # The correct form can be found in Eq. 7.4b.
-            return rot[i][1]*R_mat(l-1,mu,m_+1, rot)+rot[i][-1]*R_mat(l-1,mu,-m_-1, rot)
+            return rot[i][1]*R_mat(l-1,mu,m_+1, rot) \
+                  +rot[i][-1]*R_mat(l-1,mu,-m_-1, rot)
 
 def bU_mat(l,m,m_, rot):
     '''
@@ -122,11 +134,11 @@ def bV_mat(l,m,m_, rot):
     if m==0:
         return p_mat(1,l,1,m_, rot) + p_mat(-1,l,-1,m_, rot)
     elif m>0:
-        return p_mat(1,l,m-1,m_, rot)*(1+delta(m,1))**0.5 - \
-               p_mat(-1,l,-m+1,m_, rot)*(1-delta(m,1))
+        return p_mat(1,l,m-1,m_, rot)*(1+delta(m,1))**0.5 \
+              -p_mat(-1,l,-m+1,m_, rot)*(1-delta(m,1))
     elif m<0:
-        return p_mat(1,l,m+1,m_, rot)*(1-delta(m,-1)) + \
-               p_mat(-1,l,-m-1,m_, rot)*(1+delta(m,-1))**0.5
+        return p_mat(1,l,m+1,m_, rot)*(1-delta(m,-1)) \
+              +p_mat(-1,l,-m-1,m_, rot)*(1+delta(m,-1))**0.5
 
 def bW_mat(l,m,m_, rot):
     '''
@@ -152,15 +164,17 @@ def R_mat(l,m,m_, rot):
         else:
             return rot[m][m_]
     else:
-        return u_mat(l,m,m_)*bU_mat(l,m,m_, rot) + \
-               v_mat(l,m,m_)*bV_mat(l,m,m_, rot) + \
-               w_mat(l,m,m_)*bW_mat(l,m,m_, rot)
+        return u_mat(l,m,m_)*bU_mat(l,m,m_, rot) \
+              +v_mat(l,m,m_)*bV_mat(l,m,m_, rot) \
+              +w_mat(l,m,m_)*bW_mat(l,m,m_, rot)
 
 #%
 def reorder_rot(rot_mat):
     '''
     Normalize and reorder the input rotation matrix:
     e.g., [[1,0,0],[0,1,0],[0,0,1]] -> [[0,0,1],[0,1,0],[1,0,0]]
+
+    Here the reordered rot_matrix is returned as a dict to use custome indeces.
     '''
     assert np.allclose(np.dot(rot_mat.T, rot_mat), np.eye(3)) == True, \
         'ERROR: rot_mat is not unitary.'
@@ -168,11 +182,12 @@ def reorder_rot(rot_mat):
     # first we renormalize rot_mat
     rot_mat = rot_mat/np.linalg.norm(rot_mat,axis=1)
     
-    # Note: rotation matrix is defined as
+    # Note: In the REF, the rotation matrix is defined as
     #                                (r_00, r_01, r_02)
     #        (x', y', z') = (x, y, z)|r_10, r_11, r_12|
     #                                (r_20, r_21, r_22)
-    #       However, our input rotation mat is is so that:
+    #       However, our input rotation mat is defined (in accordance with the
+    #       Euler angle) so that:
     #        (a1')   (r'_00, r'_01, r'_02)(a1)
     #        (a2') = |r'_10, r'_11, r'_12||a2|
     #        (a3')   (r'_20, r'_21, r'_22)(a3)
@@ -210,22 +225,28 @@ def reorder_rot(rot_mat):
 def get_R_mat(l, rot_mat):
     '''
     orbital order:
-    - l = 0:  s
-    - l = 1:  p_y p_z p_x
-    - l = 2:  d_xy d_yz d_z2 d_xz d_x2-y2
-              ...
-    Order taken from: https://en.wikipedia.org/wiki/Table_of_spherical_harmonics#Real_spherical_harmonics
+          m:  -3         |-2   | -1   | 0   | 1    | 2         | 3
+    - l = 0:             |     |      | s   |      |           |
+    - l = 1:             |     | p_y  | p_z | p_x  |           |
+    - l = 2:             |d_xy | d_yz | d_z2| d_xz | d_x2-y2   |
+    - l = 3:  f_y(3x2-y2)|f_xyz| f_yz2| f_z3| f_xz2| f_z(x2-y2)| f_x(x2-3y2)
 
-    The rotated orbtial (\hat{Y_m}) can be constructed from the original orbital (Y_m) as follows:
+    Order of real spherical harmonics taken from: 
+    https://en.wikipedia.org/wiki/Table_of_spherical_harmonics
+
+    The rotated orbtial (\hat{Y_m}) can be constructed from the original orbital 
+    (Y_m) as follows:
+
     \hat{Y_m} = \sum_{m'} R_{mm'} Y_m' 
+
+    Here the R is calculated for each index l m m_.
     '''
     rot = reorder_rot(rot_mat)
     # l = 2
     R = np.empty([2*l+1,2*l+1])
-    for i in range(2*l+1):
-        for j in range(2*l+1):
-            # print("main",l,i-l,j-l)
-            R[i,j] = np.real(R_mat(l,i-l,j-l, rot))
+    for m in range(2*l+1):
+        for m_ in range(2*l+1):
+            R[m,m_] = np.real(R_mat(l,m-l,m_-l, rot))
     return R
 
 #%% test
