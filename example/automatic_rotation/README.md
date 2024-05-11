@@ -80,19 +80,19 @@ To get corresponding pDOS plot, put `rot_pdos_plot.py` into your scf folder
 command:
 
 ```
-python rot_pdos_plot.py 0 6 -180 0 -49.75 -2 12 100 0.1
+python rot_pdos_plot.py 0 6 -135 0 -54.75 -2 12 100 0.1
 ```
 
 The command line arguments are:
 ```
 0      |  6   |  Euler alpha | Euler beta | Euler gamma | dos E min | dos E max | dos points | smearing Sigma|
-Atom 0 |  dz2 |  -180        | 0          | -49.75      | -2        | -2        | 100        | 0.1           |
+Atom 0 |  dz2 |  -135        | 0          | -54.75      | -2        | -2        | 100        | 0.1           |
 ```
 
 And this give us the following plot that corresponds to the pband plot of
 $d_{z^2}$ orbtial:
 
 <p align="center">
-<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/automatic_rotation/images/pdos_dz2.png?raw=true" width="50%" height="50%">
+<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/automatic_rotation/images/pdos_dz2.png?raw=true" width="20%" height="20%">
 </p>
 
