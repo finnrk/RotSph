@@ -54,8 +54,17 @@ I.e., get projection coefficients obtained by projecting wavefunctions on to
 atomic orbitals on the rotated frame.
 
 This feature has been implemented (see example/manual_rotation) and an routine
-that performes automatic search of the best Eular angles is also implemented
+that performes automatic search of the best Euler angles is also implemented
 (see example/automatic_rotation).
+
+One key difference between this rotation based method and the diagonalization
+based method (e.g., [`diag_basis` in QuantumEspresso](https://www.quantum-espresso.org/Doc/INPUT_PROJWFC.html))
+is that here the relative orbital orientation is completely fixed. This is
+because the diagonalization based method has $(N*(1+N))/2$ degrees of freedom 
+where $N=2l+1$, while the rotation based method only has three Euler angles as
+variables. The result of this is that diagonalization based method might allow
+$d_{xy}$ to be at a different rotated frame than $d_{xz}$. The same would not
+happen for the rotation based method.
 
 ## Citation 
 ```
