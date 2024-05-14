@@ -41,9 +41,6 @@ R = rotsph.get_R_mat(3,r)
 print(R)
 ```
 
-## Result Checker
-See `plot_rotated_orbitals.nb` (Mathematica Notebook).
-
 ## Use Case
 In normal DFT codes, orbital projections are usually done with real atomic 
 orbitals that are oriented on the canonical Cartesian axes. However, this may 
@@ -59,6 +56,16 @@ atomic orbitals on the rotated frame.
 This feature has been implemented (see example/manual_rotation) and an routine
 that performes automatic search of the best Eular angles is also implemented
 (see example/automatic_rotation).
+
+## Citation 
+```
+@software{rotsph,
+   author = {Chengcheng Xiao},
+   title = {rotsph: a code to calculate the rotation matrix of real spherical harmonics},
+   url = {https://github.com/Chengcheng-Xiao/RotSph},
+   year = {2024}
+}
+```
 
 ## License
 RotSph is released under the MIT license.
