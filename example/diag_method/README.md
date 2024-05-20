@@ -15,7 +15,7 @@ projected bands.
 The general projected occupation matrix is defined as:
 
 $$
-u^{IJ\sigma}_{mm'} = \sum_{v,\mathbf{k}} f_{v,\mathbf{k}}^{\sigma} \braket{\psi_{v,\mathbf{k}}^{\sigma}|\phi_{m'}^J} \braket{\phi_{m}^I|\psi_{v,\mathbf{k}}^{\sigma}}
+u^{IJ\sigma}\_{mm'} = \sum_{v,\mathbf{k}} f_{v,\mathbf{k}}^{\sigma} \braket{\psi_{v,\mathbf{k}}^{\sigma}|\phi_{m'}^J} \braket{\phi_{m}^I|\psi_{v,\mathbf{k}}^{\sigma}}
 $$
 
 where $\sigma$ represents the spin, $I$ and $J$ are the atom indices, $m$ and 
