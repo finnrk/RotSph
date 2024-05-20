@@ -10,6 +10,11 @@ on diagonalizing the projected occupation matrix proposed by [Ruchika Mahajan
 et. al.](https://doi.org/10.1103/PhysRevMaterials.5.104402) is used to get the 
 projected bands.
 
+> [!NOTE]
+> This is effectively what `diag_basis` in
+> [`projwfc.x`](https://www.quantum-espresso.org/Doc/INPUT_PROJWFC.html#idm37)
+> of QuantumEspresso does.
+
 ### Method
 
 The general projected occupation matrix is defined as:
