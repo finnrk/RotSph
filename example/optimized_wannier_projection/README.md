@@ -9,6 +9,10 @@ Again, we are going to be using BaTiO₃ as an example. Here, we are going to us
 the _diag_ structure where c-axis is aligned along the [1,-1,1] direction with 
 Eular angles of [45, 0, 54.73] degrees.
 
+> [!NOTE]
+> Here, we adopt the [Tait–Bryan notation](https://en.wikipedia.org/wiki/Euler_angles#Tait–Bryan_angles),
+> specifically, [the z-y-x conention (alpha-z, beta-y, gamma-x)](https://en.wikipedia.org/wiki/Rotation_matrix#General_3D_rotations).
+
 
 ### Using un-rotated atomic orbtials
 

@@ -7,6 +7,10 @@ Here I demonstrate the effect of canonical porjection using using two BaTiO₃
 one with the c-axis aligned along the [1,-1,1] direction ("_diag_") with Eular
 angles of [45, 0, 54.73] degrees.
 
+> [!NOTE]
+> Here, we adopt the [Tait–Bryan notation](https://en.wikipedia.org/wiki/Euler_angles#Tait–Bryan_angles),
+> specifically, [the z-y-x conention (alpha-z, beta-y, gamma-x)](https://en.wikipedia.org/wiki/Rotation_matrix#General_3D_rotations).
+
 Using canonical projection, for the orth structure, we obtain the following
 projected band structure:
 

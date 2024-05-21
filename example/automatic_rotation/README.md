@@ -5,6 +5,10 @@ c-axis aligned along the z-direction ("_orth_") and the other with the c-axis
 aligned along the [1,-1,1] direction ("_diag_") with Eular angles of 
 [45, 0, 54.73] degrees.
 
+> [!NOTE]
+> Here, we adopt the [Tait–Bryan notation](https://en.wikipedia.org/wiki/Euler_angles#Tait–Bryan_angles),
+> specifically, [the z-y-x conention (alpha-z, beta-y, gamma-x)](https://en.wikipedia.org/wiki/Rotation_matrix#General_3D_rotations).
+
 Whilst we know the actual rotation matrix used to obtain the _diag_ structure,
 here, I'll show an way that can automatically search for the best Eular angles.
 
