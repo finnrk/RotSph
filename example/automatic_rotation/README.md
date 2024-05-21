@@ -2,7 +2,7 @@
 
 Just like in the manual rotation, here we have two BaTiO₃ structures, one with 
 c-axis aligned along the z-direction ("_orth_") and the other with the c-axis 
-aligned along the [1,-1,1] direction ("_diag_") with Eular angles of 
+aligned along the [1,-1,1] direction ("_diag_") with Euler angles of 
 [45, 0, 54.73] degrees.
 
 > [!NOTE]
@@ -10,14 +10,14 @@ aligned along the [1,-1,1] direction ("_diag_") with Eular angles of
 > specifically, [the z-y-x conention (alpha-z, beta-y, gamma-x)](https://en.wikipedia.org/wiki/Rotation_matrix#General_3D_rotations).
 
 Whilst we know the actual rotation matrix used to obtain the _diag_ structure,
-here, I'll show an way that can automatically search for the best Eular angles.
+here, I'll show an way that can automatically search for the best Euler angles.
 
 ### Method
 
 The method used here is based on the observation that the best projector 
 (atomic orbitals) will yield the highest projection coeffs (squared).
 
-In other workds, this means we want to find the Eular angles that gives the
+In other workds, this means we want to find the Euler angles that gives the
 highest total projection coeffs (squared) of an $l$-shell for a set of
 wavefunctions at $\Gamma$ point (in theory this can also be extended to be
 k-dependent, but for the moment we shall stick to only use $\Gamma$ point).
@@ -27,7 +27,7 @@ orthogonality is retained via the radial part of the wavefunctions instead of
 the angular part. And using a different rotation frame for different $l$-shells
 should also be valid.
 
-Whilst in theory we could find the best Eular angles by performing an 
+Whilst in theory we could find the best Euler angles by performing an 
 analytical analysis on the angle dependence of the projection coeffs, due to 
 the normalization factor difference (e.g. https://www.vasp.at/forum/viewtopic.php?t=18618)
 I'll stick with an exhaust search of all the possible angles.
@@ -49,11 +49,11 @@ With the _diag_ structure, we have
 <img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/automatic_rotation/images/band_diag.png?raw=true" width="50%" height="50%">
 </p>
 
-Now, using `find_angles.py` file (`python find_angles.py 0 d`), we get the following Eular angles:
+Now, using `find_angles.py` file (`python find_angles.py 0 d`), we get the following Euler angles:
 ```
-   Eular_alpha:  -135.00 degrees
-   Eular_beta :   0.00 degrees
-   Eular_gamma:  -54.75 degrees
+   Euler_alpha:  -135.00 degrees
+   Euler_beta :   0.00 degrees
+   Euler_gamma:  -54.75 degrees
 ```
 
 And with these angles, we can re-calculate the projected band structures using

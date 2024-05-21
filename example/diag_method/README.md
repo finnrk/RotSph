@@ -2,7 +2,7 @@
 
 Just like in the manual rotation, here we have two BaTiO₃ structures, one with 
 c-axis aligned along the z-direction ("_orth_") and the other with the c-axis 
-aligned along the [1,-1,1] direction ("_diag_") with Eular angles of 
+aligned along the [1,-1,1] direction ("_diag_") with Euler angles of 
 [45, 0, 54.73] degrees.
 
 Unlike the rotation mathod used in this repo, here, an alternative method based 

@@ -221,9 +221,9 @@ for iter in range(4):
 # pz can be set to be along px or py as they are identical... p orbtials are weird.
 #  print(result[:])
 print(f'''
-   Eular_alpha:  {result[0]:5.2f} degrees
-   Eular_beta :  {result[1]:5.2f} degrees 
-   Eular_gamma:  {result[2]:5.2f} degrees''')
+   Euler_alpha:  {result[0]:5.2f} degrees
+   Euler_beta :  {result[1]:5.2f} degrees 
+   Euler_gamma:  {result[2]:5.2f} degrees''')
 
 # pz along actual pz
 #  print(get_max(proj_data, 3, 'p', 45,0,54.73, 1, 1))

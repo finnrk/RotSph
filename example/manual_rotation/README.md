@@ -4,7 +4,7 @@
 
 Here I demonstrate the effect of canonical porjection using using two BaTiO₃
 (BTO) sturctures, one with c-axis aligned along the z-direction ("_orth_") and
-one with the c-axis aligned along the [1,-1,1] direction ("_diag_") with Eular
+one with the c-axis aligned along the [1,-1,1] direction ("_diag_") with Euler
 angles of [45, 0, 54.73] degrees.
 
 > [!NOTE]

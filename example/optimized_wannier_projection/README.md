@@ -7,7 +7,7 @@ projections used for Wannierization (using Wannier90).
 
 Again, we are going to be using BaTiO₃ as an example. Here, we are going to use 
 the _diag_ structure where c-axis is aligned along the [1,-1,1] direction with 
-Eular angles of [45, 0, 54.73] degrees.
+Euler angles of [45, 0, 54.73] degrees.
 
 > [!NOTE]
 > Here, we adopt the [Tait–Bryan notation](https://en.wikipedia.org/wiki/Euler_angles#Tait–Bryan_angles),
@@ -46,7 +46,7 @@ Initial State
 
 ### Using optimized atomic orbtials
 
-Since we know the optimized local frame can be constructed using Eular angles of 
+Since we know the optimized local frame can be constructed using Euler angles of 
 [45, 0, 54.73] degrees. The rotated z and x axis can be found using the
 following script (`get_axis.py`):
 ```python
