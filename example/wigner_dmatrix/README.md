@@ -8,8 +8,9 @@ $$
 $$
 
 Since we know the transformation matrix $U$ to go from [the complex spherical 
-harmonics to the real ones](https://en.wikipedia.org/wiki/Table_of_spherical_harmonics#Real_spherical_harmonics).
-we can write:
+harmonics to the real ones](https://en.wikipedia.org/wiki/Table_of_spherical_harmonics#Real_spherical_harmonics),
+we can write the complex spherical harmonics from one local frame 
+$\tilde{Y}\_{l}^{n'}$ to another frame $Y_{l}^{n}$:
 
 $$
 \begin{aligned}
@@ -21,7 +22,8 @@ $$
 \end{aligned}
 $$
 
-where $Y_{l,c}$ is a real spherical harmonic,
+where $Y_{l,c}$ is a real spherical harmonic obtained from the 
+unitary transformation,
 
 $$
 \begin{aligned}
@@ -30,11 +32,12 @@ $$
 \sum_{a} \tilde{Y}\_{l}^{a} \left( \sum_{d}  U_{a}^{d\dagger}U_{d}^{n'} \right)  &= \sum_{n} D^{n'}\_{n}  \sum_{c}  U_{c}^{n} Y_{l,c} \\
 \sum_{d} \tilde{Y}\_{l,d} U_{d}^{n'}  &= \sum_{n} D^{n'}\_{n}  \sum_{c}  U_{c}^{n} Y_{l,c} \\
 \sum_{n'} U^{d\dagger}\_{n'}\sum_{d} \tilde{Y}\_{l,d} U_{d}^{n'}  &= \sum_{n'} U^{d\dagger}\_{n'}\sum_{n} D^{n'}\_{n}  \sum_{c}  U_{c}^{n} Y_{l,c} \\
-\sum_{n'} \tilde{Y}\_{l,d} &= \sum\_{n'} U^{d\dagger}\_{n'}\sum_{n} D^{n'}\_{n}  \sum\_{c}  U_{c}^{n} Y_{l,c} 
+\tilde{Y}\_{l,d} &= \sum\_{n'} U^{d\dagger}\_{n'}\sum_{n} D^{n'}\_{n}  \sum\_{c}  U_{c}^{n} Y_{l,c}.
 \end{aligned}
 $$
 
-Hence, the transformation matrix is:
+Finally, we see that the transformation matrix can be written using Wigner's
+D-matrix as:
 
 $$
 \mathbf{T} = \mathbf{U^{\dagger}DU}.
