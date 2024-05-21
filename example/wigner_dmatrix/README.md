@@ -75,6 +75,9 @@ array([[-0.3402,  0.6667, -0.2635, -0.4304,  0.2635,  0.    , -0.3402],
 
 With rotsph, the equivalent Euler angles is (45,0,54.74):
 ```python
+from rotsph import rotsph
+import numpy as np
+
 z_angle = 45/180*np.pi
 rot_z =np.array([[np.cos(z_angle),-np.sin(z_angle),0],\
         [np.sin(z_angle),np.cos(z_angle),0],[0,0,1]])
