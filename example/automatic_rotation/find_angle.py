@@ -93,7 +93,7 @@ def read_PROCAR12(file_path,report=False):
 #---------------------------------------
 def get_max(proj_data, atom_idx=0, orbital='d', alpha=0, beta=0, gamma=0, half_range=10, dtheta=1):
 
-    # sensible range: https://en.wikipedia.org/wiki/Euler_angles#Signs,_ranges_and_conventions
+    # sensible range: https://en.wikipedia.org/wiki/Euler_angles#Signs_and_ranges
     if half_range >= 180:
         half_range = 180
         # y angle only needs to be -90 to 90
