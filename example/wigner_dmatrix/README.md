@@ -14,14 +14,23 @@ we can write:
 $$
 \begin{aligned}
 \tilde{Y}\_{l}^{n'} &= \sum_{n} D^{n'}\_{n} Y_{l}^{n}\\
-&= \sum_{n} D^{n'}\_{n} \left( \sum_{b }\mathbb{I}^{n}\_{b} Y_{l}^{b} \right)\\
-&= \sum_{n} D^{n'}\_{n} \left[ \sum_{b} \left( \sum_{c}  U_{c}^{n}U_{b}^{c\dagger} \right) Y_{l}^{b} \right]\\
-&= \sum_{n} D^{n'}\_{n}  \sum_{c}  U_{c}^{n} \sum_{b} U_{b}^{c\dagger} Y_{l}^{b} \\
+&=\sum_{n} D^{n'}\_{n} \left( \sum_{b }\mathbb{I}^{n}\_{b} Y_{l}^{b} \right)\\
+&=\sum_{n} D^{n'}\_{n} \left[ \sum_{b} \left( \sum_{c}  U_{c}^{n}U_{b}^{c\dagger} \right) Y_{l}^{b} \right]\\
+&=\sum_{n} D^{n'}\_{n}  \sum_{c}  U_{c}^{n} \sum_{b} U_{b}^{c\dagger} Y_{l}^{b} \\
+\tilde{Y}\_{l}^{n'} &= \sum_{n} D^{n'}\_{n}  \sum_{c}  U_{c}^{n} Y_{l,c} \\
+\end{aligned}
+$$
+
+where $Y_{l,c}$ is a real spherical harmonic,
+
+$$
+\begin{aligned}
 \tilde{Y}\_{l}^{n'} &= \sum_{n} D^{n'}\_{n}  \sum_{c}  U_{c}^{n} Y_{l,c} \\
 \sum_{a} \tilde{Y}\_{l}^{a} \mathbb{I}^{n'}\_{a} &= \sum_{n} D^{n'}\_{n}  \sum_{c}  U_{c}^{n} Y_{l,c} \\
 \sum_{a} \tilde{Y}\_{l}^{a} \left( \sum_{d}  U_{a}^{d\dagger}U_{d}^{n'} \right)  &= \sum_{n} D^{n'}\_{n}  \sum_{c}  U_{c}^{n} Y_{l,c} \\
 \sum_{d} \tilde{Y}\_{l,d} U_{d}^{n'}  &= \sum_{n} D^{n'}\_{n}  \sum_{c}  U_{c}^{n} Y_{l,c} \\
-\sum_{n'} U^{d\dagger}\_{n'}\sum_{d} \tilde{Y}\_{l,d} U_{d}^{n'}  &= \sum_{n'} U^{d\dagger}\_{n'}\sum_{n} D^{n'}\_{n}  \sum_{c}  U_{c}^{n} Y_{l,c} \\\sum_{n'} \tilde{Y}_{l,d} &= \sum_{n'} U^{d\dagger}_{n'}\sum_{n} D^{n'}_{n}  \sum_{c}  U_{c}^{n} Y_{l,c} 
+\sum_{n'} U^{d\dagger}\_{n'}\sum_{d} \tilde{Y}\_{l,d} U_{d}^{n'}  &= \sum_{n'} U^{d\dagger}\_{n'}\sum_{n} D^{n'}\_{n}  \sum_{c}  U_{c}^{n} Y_{l,c} \\
+\sum_{n'} \tilde{Y}\_{l,d} &= \sum\_{n'} U^{d\dagger}\_{n'}\sum_{n} D^{n'}\_{n}  \sum\_{c}  U_{c}^{n} Y_{l,c} 
 \end{aligned}
 $$
 
@@ -83,7 +92,7 @@ np.set_printoptions(suppress=True, precision=4)
 print(T_mat)
 ```
 and get:
-```
+```python
 array([[-0.3402,  0.6667, -0.2635, -0.4304,  0.2635,  0.    , -0.3402],
        [ 0.4082, -0.    ,  0.527 ,  0.    ,  0.527 ,  0.3335, -0.4082],
        [ 0.2635, -0.0001, -0.6124,  0.3332,  0.6124, -0.    ,  0.2635],
@@ -92,3 +101,4 @@ array([[-0.3402,  0.6667, -0.2635, -0.4304,  0.2635,  0.    , -0.3402],
        [ 0.4714, -0.0001,  0.0001, -0.7454, -0.0001,  0.    ,  0.4714],
        [ 0.3535, -0.    , -0.4565,  0.    , -0.4565,  0.5773, -0.3535]])
 ```
+which is exactly the same as the results obtained from pyscf.
