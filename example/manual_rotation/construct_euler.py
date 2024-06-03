@@ -29,7 +29,8 @@ b = np.cross(c,a)
 if not np.isclose(np.dot(c,a),0.0,atol=1e-12):
     # force a to be orthogonal to c?
 	if force_orth:
-		a=np.cross(c,b)
+        # to rid of reflection, a minus sign is needed.
+		a=-np.cross(c,b)
 	else:
 		raise ValueError("a and c not orthogonal.")
 
@@ -46,11 +47,12 @@ rot_mat = np.dot(np.linalg.inv(np.eye(3)), frame_target)
 
 # fix reflection
 if np.isclose(np.linalg.det(rot_mat.T),-1,rtol=1e-05):
-    rot_mat = -rot_mat
+    print('Reflection detected. Exiting...')
+    exit()
 
 # get Euler angles
 # Filterout User warning about Gimbo lock.
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", category=UserWarning)
-    Euler_angles = R.from_matrix(rot_mat.T).as_euler('ZXY', degrees=True)
+    Euler_angles = R.from_matrix(rot_mat.T).as_euler('ZYX', degrees=True)
     print(Euler_angles)
