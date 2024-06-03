@@ -44,6 +44,10 @@ frame_target = np.array([a,b,c])
 # construct the rotation matrix
 rot_mat = np.dot(np.linalg.inv(np.eye(3)), frame_target)
 
+# fix reflection
+if np.isclose(np.linalg.det(rot_mat.T),-1,rtol=1e-05):
+    rot_mat = -rot_mat
+
 # get Euler angles
 # Filterout User warning about Gimbo lock.
 with warnings.catch_warnings():
