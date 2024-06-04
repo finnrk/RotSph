@@ -42,3 +42,26 @@ and $t_{2g}$ DOS:
 <img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/manual_rotation_2/images/DOS_t2g.png?raw=true" width="25%" height="25%">
 </p>
 
+### Using the Euler angle finder for octahedrals
+Alternatively, one can use the `eg_t2g_Euler_angle.py`:
+```
+python eg_t2g_Euler_angle.py 0
+                             ^ atom index
+```
+and it will spit out the proper Euler angles, in this case
+```
+[-117.12133235  -35.10745263   45.58423345]
+```
+which properly alignes the z axis along the long axis of the Cr-I octahedral,
+and gives us:
+
+<p align="center">
+<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/manual_rotation_2/images/DOS_eg_1.png?raw=true" width="25%" height="25%">
+</p>
+
+and $t_{2g}$ DOS:
+
+<p align="center">
+<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/manual_rotation_2/images/DOS_t2g_2.png?raw=true" width="25%" height="25%">
+</p>
+
