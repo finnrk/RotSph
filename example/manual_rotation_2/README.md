@@ -42,7 +42,11 @@ and $t_{2g}$ DOS:
 <img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/manual_rotation_2/images/DOS_t2g.png?raw=true" width="25%" height="25%">
 </p>
 
-### Using the Euler angle finder for octahedrals
+However, we see that these plots are still slightly different from Fig. 4 in 
+10.1016/j.commatsci.2020.109820. This is because here the z-axis is not aligned
+along the long axis of the octahedron
+
+### Using the Euler angle finder for octahedrons
 Alternatively, one can use the `eg_t2g_Euler_angle.py`:
 ```
 python eg_t2g_Euler_angle.py 0
@@ -52,7 +56,7 @@ and it will spit out the proper Euler angles, in this case
 ```
 [-117.12133235  -35.10745263   45.58423345]
 ```
-which properly alignes the z axis along the long axis of the Cr-I octahedral,
+which properly alignes the z axis along the long axis of the Cr-I octahedron,
 and gives us:
 
 <p align="center">
@@ -62,6 +66,8 @@ and gives us:
 and $t_{2g}$ DOS:
 
 <p align="center">
-<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/manual_rotation_2/images/DOS_t2g_2.png?raw=true" width="25%" height="25%">
+<img src="https://github.com/Chengcheng-Xiao/RotSph/blob/master/example/manual_rotation_2/images/DOS_t2g_1.png?raw=true" width="25%" height="25%">
 </p>
 
+This time, the plots looks exactly like the ones in Fig.4 of 
+10.1016/j.commatsci.2020.109820.
