@@ -1,4 +1,5 @@
 from pymatgen.core import Lattice, Structure, Molecule
+from pymatgen.analysis import local_env
 from scipy.spatial.transform import Rotation as R
 import numpy as np
 import sys
@@ -11,16 +12,23 @@ atom_idx = int(sys.argv[1])
 
 structure = Structure.from_file("POSCAR")
 
-# find octhedral axes
-for r in np.linspace(1,5,100):
-    neighbors = structure.get_neighbors(structure[atom_idx],r=r)
-    if len(neighbors) == 6:
-        break
-    elif len(neighbors) > 6:
-        print("Too many neighbors.")
-        print("Not octahedral symmetry.")
-        exit()
-		
+# find octhedral neighbors [manual]
+#  for r in np.linspace(1,5,100):
+#      neighbors = structure.get_neighbors(structure[atom_idx],r=r)
+#      if len(neighbors) == 6:
+#          break
+#      elif len(neighbors) > 6:
+#          print("Too many neighbors.")
+#          print("Not octahedral symmetry.")
+#          exit()
+
+# find octhedral neighbors [auto]
+if (local_env.site_is_of_motif_type(structure, atom_idx)) == 'octahedral':
+    neighbors = local_env.get_neighbors_of_site_with_index(structure, atom_idx)    
+else:
+    print("Not octahedral symmetry.")
+    exit()
+
 # measure distance
 dist = np.array([structure[0].distance(neighbor) for neighbor in neighbors])
 
@@ -35,8 +43,8 @@ elif np.sum(dist < half)<3:
     z_axis = np.where(dist < half)[0]
     xy_plane = np.where(dist > half)[0]
 else:
-    print("Cannot determine z and x axes.")
-    print("Not octahedral symmetry (NOT even approximately).")
+    # evenly distributed or 3 long 3 short (less likely)
+    # either way, choose a random plane and axis.
     xy_plane = np.where(dist < half)[0]
     z_axis = np.where(dist > half)[0]
 
@@ -44,9 +52,7 @@ z_atom = neighbors[z_axis[0]]
 z = z_atom.coords - structure[0].coords
 x_atom = neighbors[xy_plane[0]]
 x = x_atom.coords - structure[0].coords
-#  print(z); print(x)
 
-#  print(structure[0].coords); print(z_atom.coords); print(x_atom.coords)
 
 # calculate b
 y = np.cross(z,x)
@@ -69,12 +75,10 @@ frame_target = np.array([x,y,z])
 
 # construct the rotation matrix
 rot_mat = np.dot(np.linalg.inv(np.eye(3)), frame_target)
-#  print(rot_mat)
 
 # fix reflection
 if np.linalg.det(rot_mat) < 0:
     rot_mat = -rot_mat
-#  print(rot_mat)
 
 # get Euler angles
 # Filterout User warning about Gimbo lock.
