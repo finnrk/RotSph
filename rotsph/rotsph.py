@@ -1,5 +1,5 @@
 import numpy as np
-# REF: J. Phys. Chem. 1996, 100, 15, 6342–634
+# REF: J. Phys. Chem. 1996, 100, 15, 6342–6347
 
 #% build small u, v, w
 def delta(i,j):
@@ -263,3 +263,103 @@ def get_R_mat(l, rot_mat):
 # rot_mat=np.matrix([[-1,0,1],[0,1,0],[1,0,1]])
 # R2 = get_R_mat(3,rot_mat)
 # print(R2)
+
+def quaternion_to_euler(w, x, y, z):
+    """
+    Convert a normalised quaternion into euler angles (roll, pitch, yaw) in Body 3-2-1 sequence.
+
+    Parameters:
+    w, x, y, z : floats 
+        The components of a normalised quaternion which characterises a rotation.
+
+    Returns:
+    tuple (roll, pitch, yaw) of floats
+    roll
+        Rotation angle around the x-axis in radians.
+    pitch
+        Rotation angle around the y-axis in radians.
+    yaw 
+        Rotation angle around the z-axis in radians.
+
+    """
+    t0 = +2.0 * (w * x + y * z)
+    t1 = +1.0 - 2.0 * (x**2 + y**2)
+    roll_x = np.arctan2(t0, t1)
+
+    t2 = +2.0 * (w * y - z * x)
+    t2 = +1.0 if t2 > +1.0 else t2
+    t2 = -1.0 if t2 < -1.0 else t2
+    pitch_y = np.arcsin(t2)
+
+    t3 = +2.0 * (w * z + x * y)
+    t4 = +1.0 - 2.0 * (y**2 + z**2)
+    yaw_z = np.arctan2(t3, t4)
+
+    return roll_x, pitch_y, yaw_z  # in radians
+
+def euler_to_quaternion(roll, pitch, yaw):
+    """
+    Convert Euler angles (roll, pitch, yaw) in Body 3-2-1 sequence to a normalised quaternion.
+    
+    Parameters:
+    roll : float
+        Rotation angle around the x-axis in radians.
+    pitch : float
+        Rotation angle around the y-axis in radians.
+    yaw : float
+        Rotation angle around the z-axis in radians.
+        
+    Returns:
+    tuple
+        A tuple representing the quaternion (w, x, y, z).
+    """
+    cy = np.cos(yaw * 0.5)
+    sy = np.sin(yaw * 0.5)
+    cp = np.cos(pitch * 0.5)
+    sp = np.sin(pitch * 0.5)
+    cr = np.cos(roll * 0.5)
+    sr = np.sin(roll * 0.5)
+
+    w = cr * cp * cy + sr * sp * sy
+    x = sr * cp * cy - cr * sp * sy
+    y = cr * sp * cy + sr * cp * sy
+    z = cr * cp * sy - sr * sp * cy
+
+    return (w, x, y, z)
+
+
+def quaternion_to_matrix(w,x,y,z):
+    """
+    Converts a normalised quaternion to a rotation matrix
+
+    Parameters:
+    w, x, y, z : floats 
+        The components of a normalised quaternion which characterises a rotation.
+
+    Returns:
+    numpy 3x3 array
+        orthogonal rotation matrix
+    
+    """
+    return np.array([[1 - 2*(y**2 + z**2),  2.0*(x*y+w*z),   2.0*(x*z-w*y)],   [2.0*(x*y-w*z), 1 - 2*(x**2 + z**2),  2.0*(w*x+y*z)],  [2.0*(w*y+x*z),    2.0*(y*z-w*x),     1 - 2*(x**2 + y**2)]]).T
+
+
+def euler_to_matrix(a,b,g):
+
+    """
+    Convert Euler angles (roll, pitch, yaw) in Body 3-2-1 sequence to a rotation matrix.
+    
+    Parameters:
+    roll : float
+        Rotation angle around the x-axis in radians.
+    pitch : float
+        Rotation angle around the y-axis in radians.
+    yaw : float
+        Rotation angle around the z-axis in radians.
+
+    Returns:
+    numpy 3x3 array
+        orthogonal rotation matrix  
+        """
+
+    return quaternion_to_matrix(*euler_to_quaternion(a,b,g))

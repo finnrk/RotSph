@@ -17,7 +17,7 @@ here, I'll show an way that can automatically search for the best Euler angles.
 The method used here is based on the observation that the best projector 
 (atomic orbitals) will yield the highest projection coeffs (squared).
 
-In other workds, this means we want to find the Euler angles that gives the
+In other words, this means we want to find the Euler angles that gives the
 highest total projection coeffs (squared) of an $l$-shell for a set of
 wavefunctions at $\Gamma$ point (in theory this can also be extended to be
 k-dependent, but for the moment we shall stick to only use $\Gamma$ point).
