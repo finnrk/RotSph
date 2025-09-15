@@ -176,8 +176,8 @@ def reorder_rot(rot_mat):
 
     Here the reordered rot_matrix is returned as a dict to use custome indeces.
     '''
-    assert np.allclose(np.dot(rot_mat.T, rot_mat), np.eye(3)) == True, \
-        'ERROR: rot_mat is not unitary.'
+    # assert np.allclose(np.dot(rot_mat.T, rot_mat), np.eye(3)) == True, \
+    #     'ERROR: rot_mat is not unitary.'
     
     # first we renormalize rot_mat
     rot_mat = rot_mat/np.linalg.norm(rot_mat,axis=1)

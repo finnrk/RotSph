@@ -10,10 +10,16 @@ import sys
 
 
 
+"""
+ The function which quantifies the suitabilty of an orientation. We aim to minimise this.
+ Parameter: 
+ q : np.array of size (4,1)
+     A quaternion, q, which parametrises the rotation.
 
-# The function which quantifies the suitabilty of an orientation. We aim to minimise this.
-# Input: Quaternion, q, which parametrises the rotation.
-# Output: A float >= 1 where 1 is ideal.
+ Returns: 
+ float 
+    A value >= 1 where 1 is the metric of a completely diagonal system.
+ """
 def metric(q):
     out = 0
     #find rotation matrices for spherical harmonics / projectors
@@ -99,7 +105,7 @@ if nspins == 2:
             if np.abs(x) != 0:
                 x[...] = x/np.abs(x)
 
-#calculate projections as product of magnitude and phase
+#calculate complex rojections as product of magnitude and phase
 if nspins == 1:
     projs = [np.sqrt(projs2[0])*phases[0]]
 else:
@@ -109,14 +115,14 @@ else:
 
 time_sample_start = time.time()
 
-#generate rotations using quaternions uniformly distributed over S^3
+#generate rotations using quaternions randomly distributed over S^3
 numpoints = 5000
 print("Starting random sampling")
 unnormalisedqs = np.random.normal(0,1,size=(4,numpoints))
 normalisedqs = [np.array(unnormalisedqs[:, i])/np.linalg.norm(unnormalisedqs[:, i]) for i in range(numpoints)]
 
 
-#multithreading when evaluating the metric corresponding to each quaternion
+#evaluating the metric corresponding to each quaternion using multithreading
 threadstarttime = time.time()
 if __name__ == '__main__':
     with Pool(20) as p:
@@ -142,14 +148,16 @@ time_sample = time_sample_end-time_sample_start
 #gradient descent
 print("Starting gradient descent")
 grada, gradb, gradg = 200,200,200
-eta = 0.01
+eta = 0.1
 da = 0.00001
 db = 0.00001
 dg = 0.00001
 a1, b1, g1 = a+1,b+1,g+1
 time_sample_start = time.time()
 
+count = 0
 while np.abs(a-a1) > 1e-4 or  np.abs(b-b1) > 1e-4 or np.abs(g-g1) > 1e-4:
+    count += 1
     a1,b1,g1 = a,b,g
     grada = (metric(rotsph.euler_to_quaternion(a+da,b,g))-metric(rotsph.euler_to_quaternion(a-da,b,g)))/(2*da)
     a = a - grada*eta
@@ -157,7 +165,7 @@ while np.abs(a-a1) > 1e-4 or  np.abs(b-b1) > 1e-4 or np.abs(g-g1) > 1e-4:
     b = b - gradb*eta
     gradg = (metric(rotsph.euler_to_quaternion(a,b,g+dg))-metric(rotsph.euler_to_quaternion(a,b,g-dg)))/(2*dg)
     g = g - gradg*eta
-    eta *= 0.99
+    eta = eta/(1+0.01*count)
 time_sample_end = time.time()
 
 
