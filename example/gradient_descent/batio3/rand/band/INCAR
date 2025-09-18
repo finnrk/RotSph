@@ -1,0 +1,36 @@
+Start parameter for this Run:
+  NWRITE = 1  # write-flag
+  ISTART = 0  # 0-new calculation  1-continue  2-restart with constant basis
+  LWAVE  = T  # write wave functions
+  ICHARG = 1  # read charge density
+
+Electronic Relaxation 1
+  NELM   =  200  # max number of step for electronic optimization
+  NELMIN =  3    # minimum number of step for electronic optimization
+  NELMDL = -5    # number of step delayed before mixing charge density
+  EDIFFG = -0.01 # convergence criteria for geometry optimization
+  EDIFF  =  1E-5 # convergence criteria for electronic step
+  PREC   =  A    # precision preset
+  ENCUT  =  1300  # energy cutoff
+  NBANDS = 40
+
+
+Electronic Relaxation 2
+  ALGO  =  N # electronic minimization algorithm
+  LDIAG =  T # Sub-space diagonalisation
+  LREAL =  F # real-space projection
+
+Ionic Relaxation
+  NSW    =  000    # number of ionic steps
+  IBRION = -1    # ionic relax: 0-MD 1-quasi-New 2-CG
+  POTIM  =  0.5  # step length
+  LCORR  =  T    # Harris-correction to forces
+
+DOS related values:
+ ISMEAR = -5   # smearing method
+ SIGMA = 0.01    # smearing parameter
+ EMIN   = -15    # energy range for DOSCAR [min]
+ EMAX   =  15    # energy range for DOSCAR [max]
+ NEDOS  =  3000  # number of sampling points for DOSCAR
+ LORBIT =  14    # projection method
+
