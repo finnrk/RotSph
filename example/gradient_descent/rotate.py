@@ -61,18 +61,15 @@ def metric(q):
 
 #assign default parameters         
 ion = 0
-write_to_file = 0
 filein = 'PROCAR'
-fileout = 'PROCAR_OUT'
+fileout = None
 # read parameters from command line
 if len(sys.argv) > 1:
-    ion = int(sys.argv[1])
+    filein = (sys.argv[1])
     if len(sys.argv) > 2:
-        write_to_file = int(sys.argv[2])
+        ion = int(sys.argv[2])
         if len(sys.argv) > 3:
-            filein = sys.argv[3]
-            if len(sys.argv) > 4:
-                fileout = sys.argv[4]        
+            fileout = sys.argv[3]        
 
 
 #read projections from PROCAR file
@@ -97,12 +94,12 @@ else:
 #normalise phases
 with np.nditer(phases[0], op_flags=['readwrite']) as it:
     for x in it:
-        if np.abs(x) != 0:
+        if np.abs(x) != 0 and not np.isnan(x):
             x[...] = x/np.abs(x)
 if nspins == 2:
     with np.nditer(phases[1], op_flags=['readwrite']) as it:
         for x in it:
-            if np.abs(x) != 0:
+            if np.abs(x) != 0 and not np.isnan(x):
                 x[...] = x/np.abs(x)
 
 #calculate complex rojections as product of magnitude and phase
@@ -141,11 +138,13 @@ time_sample_end = time.time()
 time_sample = time_sample_end-time_sample_start
 
 
-
 #convert from quaternion to euler angles
 [a,b,g] = rotsph.quaternion_to_euler(*qfin)
 
+
+#-----------------
 #gradient descent
+#-----------------
 print("Starting gradient descent")
 grada, gradb, gradg = 200,200,200
 eta = 0.1
@@ -169,9 +168,9 @@ while np.abs(a-a1) > 1e-4 or  np.abs(b-b1) > 1e-4 or np.abs(g-g1) > 1e-4:
 time_sample_end = time.time()
 
 
-
+#------------------------
 #write output PROCAR
-
+#------------------------
 
 #rotation matrices for projections
 rot_mat = rotsph.euler_to_matrix(a,b,g)
@@ -186,7 +185,7 @@ ionwrite = 0
 spinwrite = -1
 
 #clear output file
-if write_to_file:
+if fileout is not None:
     #whether we're writing squares of projections or the complex part
     writesquares = True 
     time_write_start = time.time()
@@ -285,15 +284,58 @@ timetakengrad = time_sample_end-time_sample_start
     
 
 
-print("\n\nEuler angles: \nalpha, beta, gamma: ", a,b,g)
-print("\nQuaternion: ", rotsph.euler_to_quaternion(a,b,g))
-print("\nRotation matrix: ")
-for i in np.transpose(rotsph.euler_to_matrix(a,b,g)):
+# print("\n\nEuler angles in radians: \nalpha, beta, gamma: ", a,b,g)
+# print("\n\nEuler angles in degrees: \nz,y,x: ", g*180/np.pi,b*180/np.pi,a*180/np.pi)
+
+
+
+# print("\nQuaternion: ", rotsph.euler_to_quaternion(a,b,g))
+
+#reverse rotation from S'->S to S->S'
+[w,x,y,z] = rotsph.euler_to_quaternion(a,b,g)
+a,b,g = rotsph.quaternion_to_euler(-w,x,y,z)
+
+
+#note we swap a and g to convert from xyz to zyx convention  (so that these angles can be copy and pasted into pbandplot.py)
+print("\n\nEuler angles: \nalpha, beta, gamma: ", g*180/np.pi,b*180/np.pi,a*180/np.pi)
+
+print("\n\nRotation matrix: ")
+for i in np.transpose(rotsph.euler_to_matrix(a,b,g).T):
     print(' '.join(map(str, i)))
 print("\n")
 
+# inputmat = np.array([[ 0.46436496, -0.48844994,  0.7387705 ],
+#   [ 0.76637311, -0.19646982, -0.61161415],
+#   [ 0.443889,    0.85018602,  0.28310119]])
 
-print("Time taken on mesh search:", time_sample)
-print("Time taken on gradient descent:", timetakengrad)
-if write_to_file:
-    print("Time taken on writing to file:", time_write_end-time_write_start)
+# inputmat = np.array([[   0.6923367,  0.5989676, -0.4023776],
+#   [-0.5374349,  0.8001396,  0.2663462],
+#    [0.4814910,  0.0318505,  0.8758721]])
+
+# print("\n\nRotation matrix: ")
+# for i in np.transpose(inputmat.T):
+#     print(' '.join(map(str, i)))
+# print("\n")
+
+
+# for i in np.matmul(inputmat, rotsph.euler_to_matrix(a,b,g)):
+#     print(' '.join(map(str, i)))
+# print("\n")
+
+# for i in np.matmul(rotsph.euler_to_matrix(a,b,g),inputmat):
+#     print(' '.join(map(str, i)))
+# print("\n")
+
+# for i in np.matmul(inputmat, np.identity(3)):
+#     print(' '.join(map(str, i)))
+# print("\n")
+
+# for i in np.matmul(np.identity(3),inputmat):
+#     print(' '.join(map(str, i)))
+# print("\n")
+
+
+# print("Time taken on mesh search:", time_sample)
+# print("Time taken on gradient descent:", timetakengrad)
+# if write_to_file:
+#     print("Time taken on writing to file:", time_write_end-time_write_start)
