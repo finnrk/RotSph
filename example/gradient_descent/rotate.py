@@ -79,6 +79,8 @@ nkpoints = p.nkpoints
 nions = p.nions
 nspins = p.nspins
 
+
+
 if nspins == 1:
     projs2 = [p.data[Spin.up]]
     phases = [p.phase_factors[Spin.up]]
@@ -122,8 +124,8 @@ normalisedqs = [np.array(unnormalisedqs[:, i])/np.linalg.norm(unnormalisedqs[:, 
 #evaluating the metric corresponding to each quaternion using multithreading
 threadstarttime = time.time()
 if __name__ == '__main__':
-    with Pool(20) as p:
-        metric_list = p.map(metric, normalisedqs)
+    with Pool(20) as pool:
+        metric_list = pool.map(metric, normalisedqs)
 threadendtime = time.time()
 
 
@@ -179,102 +181,86 @@ dmat = rotsph.get_R_mat(2,rot_mat.T)
 
 
 
-bandwrite = 0
-kpointwrite = 0
-ionwrite = 0
-spinwrite = -1
 
-#clear output file
+#write output PROCAR
 if fileout is not None:
-    #whether we're writing squares of projections or the complex part
-    writesquares = True 
-    time_write_start = time.time()
-    open(fileout, 'w').close()
-    with open(filein) as r:
-        with open(fileout, "a") as w:
-
-            for line in list(r):
-                if len(line.split()) > 0:
-                    if line.split()[0] == "ion":
-                        w.write(line)
-                    elif line.split()[0] == "k-point":
-                        kpointwrite = int(line.split()[1])-1
-                        w.write(line)
-                    elif line.split()[0] == "band":
-                        bandwrite = int(line.split()[1])-1
-                        w.write(line)
-                        #reset totals
-                        tot = np.zeros(10)
-                    elif line.split()[0].isnumeric():
-                        ionwrite = int(line.split()[0])-1
-                        s = projs[spinwrite][kpointwrite,bandwrite,ionwrite,0]
-                        pin = projs[spinwrite][kpointwrite,bandwrite,ionwrite,1:4]
+    with open(fileout, "w") as w:
+        w.write("PROCAR lm decomposed + phase; opt. projector for interval (eV)   -15.0000000    15.0000000\n")
+        for spin in range(nspins):
+            w.write(f'# of k-points:  {nkpoints}         # of bands:   {nbands}         # of ions:    {nions}\n')
+            for kpointwrite in range(nkpoints):
+                w.write(f'\n k-point     {kpointwrite+1} :  {p.kpoints[kpointwrite,0]} {p.kpoints[kpointwrite,1]} {p.kpoints[kpointwrite,2]}      weight = {p.weights[kpointwrite]}\n\n')
+                for bandwrite in range(nbands):
+                    tot = np.zeros(10)
+                    w.write(f'band      {bandwrite+1} # energy  {p.eigenvalues[Spin.up if spin == 0 else 1][kpointwrite,bandwrite]} # occ.   {np.abs(p.occupancies[Spin.up if spin == 0 else 1][kpointwrite,bandwrite])}\n')
+                    w.write("\nion      s     py     pz     px    dxy    dyz    dz2    dxz  x2-y2    tot\n")
+                    #store calculated projections so they do not need to be recalculated
+                    sout_list = []
+                    pout_list = []
+                    dout_list = []
+                    total_list = []
+                    #write square of projections
+                    for ion in range(nions):
+                        s = projs[spin][kpointwrite,bandwrite,ion,0]
+                        pin = projs[spin][kpointwrite,bandwrite,ion,1:4]
                         pout = np.matmul(pmat, pin)
-                        din = projs[spinwrite][kpointwrite,bandwrite,ionwrite,4:]
+                        din = projs[spin][kpointwrite,bandwrite,ion,4:]
                         dout = np.matmul(dmat, din)
-
+                        sout_list.append(s)
+                        pout_list.append(pout)
+                        dout_list.append(dout)
                         s2 = np.abs(s)**2
                         dout2 = np.round(np.abs(dout)**2,3)
                         pout2 = np.round(np.abs(pout)**2,3)
+                        #total projection onto all orbitals for a given ion
                         total = s2 + np.sum(pout2) + np.sum(dout2)
-                        #write square of projections
-                        if writesquares:
-                            tot[0] += s2
+                        total_list.append(total)
+                        tot[0] += s2
+                        tot[-1] += total
+                        poutstring = ''
+                        for i in range(3):
+                            poutstring = poutstring + "{:.3f}".format(pout2[i]) + "  "
+                            tot[1+i] += pout2[i]
+                        doutstring = ''
+                        for i in range(5):
+                            doutstring = doutstring + "{:.3f}".format(dout2[i]) + "  "
+                            tot[4+i] += dout2[i]
+                        out = ''.join(("   ", " "*(1-int((ion+1)/10)), str(ion+1), "  ","{:.3f}".format(s2), "  ", poutstring, doutstring, "{:.3f}".format(total), "\n"))
+                        w.write(out)
+                        if ion == nions-1:
+                            out = 'tot    '
+                            for i in range(10):
+                                out += "{:.3f}".format(tot[i]) + "  "
+                            w.write((out+ "\n"))
 
-                            tot[-1] += total
-                            poutstring = ''
-                            for i in range(3):
-                                poutstring = poutstring + "{:.3f}".format(pout2[i]) + "  "
-                                tot[1+i] += pout2[i]
-                            doutstring = ''
-                            for i in range(5):
-                                doutstring = doutstring + "{:.3f}".format(dout2[i]) + "  "
-                                tot[4+i] += dout2[i]
+                    #write complex phases - normalised to the projection squared
+                    #I can't find what they are normalised to in the PROCAR file outputted by VASP
+                    w.write("ion          s             py             pz             px             dxy            dyz            dz2            dxz          dx2-y2  \n")
+                    for ion in range(nions):
+                        #use stored projections instead of re-calculating
+                        s = sout_list[ion]
+                        pout = pout_list[ion]
+                        dout = dout_list[ion]
+                        total = total_list[ion]
+                        #fixes formatting issue for s = 0 - 0j
+                        if s.imag == 0 and s.real == 0:
+                            s = 0
+                        sstring = " "*int(2+np.floor(0.5*np.sign(s.real))) + "{:.3f}".format(s.real) + " "*int(2+np.floor(0.5*np.sign(s.imag))) + "{:.3f}".format(s.imag)
+                        poutstring = ''
+                        for i in range(3):
+                            poutstring = poutstring + " "*int(3+np.floor(0.5*np.sign(pout[i].real))) + "{:.3f}".format(pout[i].real) + " "*int(2+np.floor(0.5*np.sign(pout[i].imag))) + "{:.3f}".format(pout[i].imag)
+                        doutstring = ''
+                        for i in range(5):
+                            doutstring = doutstring + " "*int(3+np.floor(0.5*np.sign(dout[i].real))) + "{:.3f}".format(dout[i].real) + " "*int(2+np.floor(0.5*np.sign(dout[i].imag))) + "{:.3f}".format(dout[i].imag)
+                        out = ''.join(("   ", " "*(1-int((ion+1)/10)), str(ion+1), sstring, poutstring, doutstring, "   ", "{:.3f}".format(total), "\n"))
+                        w.write(out)
 
-                            out = ''.join(("   ", " "*(1-int((ionwrite+1)/10)), str(ionwrite+1), "  ","{:.3f}".format(s2), "  ", poutstring, doutstring, "{:.3f}".format(total), "\n"))
-                            w.write(out)
-                            if ionwrite == nions-1:
-                                out = 'tot    '
-                                for i in range(10):
-                                    out += "{:.3f}".format(tot[i]) + "  "
-                                w.write((out+ "\n"))
-
-                            #write complex phases - normalised to the projection squared
-                            #I can't find what they are normalised to in the files outputted by VASP
-
-                        else:
-                            #fixes formatting issue for s = 0 - 0j
-                            if s.imag == 0 and s.real == 0:
-                                s = 0
-                            sstring = " "*int(2+np.floor(0.5*np.sign(s.real))) + "{:.3f}".format(s.real) + " "*int(2+np.floor(0.5*np.sign(s.imag))) + "{:.3f}".format(s.imag)
-                            poutstring = ''
-                            for i in range(3):
-                                poutstring = poutstring + " "*int(3+np.floor(0.5*np.sign(pout[i].real))) + "{:.3f}".format(pout[i].real) + " "*int(2+np.floor(0.5*np.sign(pout[i].imag))) + "{:.3f}".format(pout[i].imag)
-                            doutstring = ''
-                            for i in range(5):
-                                doutstring = doutstring + " "*int(3+np.floor(0.5*np.sign(dout[i].real))) + "{:.3f}".format(dout[i].real) + " "*int(2+np.floor(0.5*np.sign(dout[i].imag))) + "{:.3f}".format(dout[i].imag)
-
-
-                            out = ''.join(("   ", " "*(1-int((ionwrite+1)/10)), str(ionwrite+1), sstring, poutstring, doutstring, "   ", "{:.3f}".format(total), "\n"))
-                            w.write(out)
-
-                            #can use totals calculated in the previous part
-                            if ionwrite == nions-1:
-                                out = 'charge '
-                                for i in range(10):
-                                    out += "{:.3f}".format(tot[i]) + "          "
-                                w.write((out+ "\n"))
-
-                        if ionwrite == nions-1:
-                            ionwrite = 0
-                            writesquares = not writesquares
-                    elif line.split()[0] == "#":
-                        w.write(line)
-                        spinwrite += 1
-                    elif line.split()[0] == "PROCAR":
-                        w.write(line)
-                else: 
-                    w.write(line)
+                        #can use totals calculated in the previous part
+                        if ion == nions-1:
+                            out = 'charge '
+                            for i in range(10):
+                                out += "{:.3f}".format(tot[i]) + "          "
+                            w.write((out+ "\n\n"))
 
     time_write_end = time.time()
 
