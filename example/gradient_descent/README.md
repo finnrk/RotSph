@@ -1,7 +1,7 @@
 ## Automatic rotation [BaTiO₃]
 
 Similarly to in automatic\_rotation, we have two BaTio3 structures. One has the Ti-O pairs aligned with the x, y, z axes ("_aligned_"), 
-while the other has has its lattice vectors rotated by a randomly generated matrix ("_rand_").
+while the other has its lattice vectors rotated by a randomly generated rotation matrix ("_rand_").
 
 > [!NOTE]
 > Here, we adopt the [Tait–Bryan notation](https://en.wikipedia.org/wiki/Euler_angles#Tait–Bryan_angles),
@@ -12,11 +12,29 @@ here, I'll show a way that can automatically search for the best Euler angles.
 
 ### Method
 
+
+
+Using the linear-combination-of-atomic-orbitals (LCAO) formalism, the wavefunction is written as
+
+$$\psi_{n'\boldsymbol{k}} = \sum_{\alpha, n,l,m}c_{n',\boldsymbol{k},n,l,m}^{(\alpha)}\phi^{(\alpha)}_{n,l,m} $$
+
+where $\psi_{n',\boldsymbol{k}}$ is the wavefunction of the $n'$ th band with a lattice wavevector of $\boldsymbol{k}$, $\phi_{n,l,m}^{(\alpha)}$ are the wavefunctions of the orbital with quantum numbers $n$, $l$, $m$ for the atom $\alpha$, and $c_{n',\boldsymbol{k},n,l,m}^{(\alpha)}$ are dimensionless coefficients. Since the atomic energy level, $n$, does not affect the angular dependence of $\phi$, we can ignore $n$ when working with the projections onto the atomic orbitals. Effectively, the projections in `PROCAR` are given by 
+
+
+$${(p^{(\alpha)}_{n',\boldsymbol{k},l,m})}^2 = \sum_n {(c_{n',\boldsymbol{k},n,l,m}^{(\alpha)})}^2$$
+
+
+
+Ideally, we would be able to find an orientation such that, for a given atom $\alpha$ and combination of $n', \boldsymbol{k}$, $p_{n',\boldsymbol{k},l,m}^{(\alpha)}$ would be non-zero for only the orbitals which experience the same [field splitting](https://en.wikipedia.org/wiki/Crystal_field_theory). As such, we want the projections for each $n', \boldsymbol{k}$ to be maximally concentrated onto a few orbitals, rather than being spread equally between all of them.
+
 We define a metric to quantify the degree to which a band is projected onto multiple orbitals.
 The metric is smallest when each band is only projected onto a single orbital and is largest when each band is projected equally onto all orbitals. We aim to minimise this metric.
 
-We construct this metric by taking a function $f(x)$, and summing together $f(x)$ for the square projections $x$ of each k-point, band and $l$ onto each orbital.
-We desire a function $f$ such that $f(a+b) < f(a) + f(b)$, (satified by any concave function). I used $f(x) = \sqrt{x}$.
+We construct this metric by taking a function $f(x)$, and summing over the orbitals for a given atom (keeping in mind the implicit dependendence of $p_{n',\boldsymbol{k},l,m}^{(\alpha)}$ on our choice of orientation).
+
+$$\mu = \sum_{n', \boldsymbol{k},l,m}f\left({\left(p_{n',\boldsymbol{k},l,m}^{(\alpha)}\right)}^2\right)$$
+
+To ensure our metric $\mu$ is minimised in the case of each band being projected onto the fewest orbitals possible, we desire a function $f$ such that $f(a+b) < f(a) + f(b)$, (satified by any [concave function](https://en.wikipedia.org/wiki/Concave_function#Properties) with $f(0)\ge0$). We used $f(x) = \sqrt{x}$.
 
 We then evaluate the metric at randomly sampled orientations to find one in 
 the viscinity of the optimal orientation, before performing a gradient descent to find the orientation to the desired accuracy.
