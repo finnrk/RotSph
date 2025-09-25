@@ -392,7 +392,7 @@ def metric(projs, ion, q):
     nkpoints, nbands, nion, norbitals =  np.shape(projs[0])
     #calculate metric - to be minimised
     for s in range(nspins):
-        for k in np.linspace(0, nkpoints-1,min(7,nkpoints)):
+        for k in np.linspace(0, nkpoints-1,min(23,nkpoints)):
             k = int(k)
             for b in range(nbands):
                 #rotate projectors
@@ -451,7 +451,7 @@ def gradient_descent(projs, ion, a,b,g):
     a1, b1, g1 = a+1,b+1,g+1
 
     count = 0
-    while np.abs(a-a1) > 1e-4 or  np.abs(b-b1) > 1e-4 or np.abs(g-g1) > 1e-4:
+    while np.abs(a-a1) > 1e-3 or  np.abs(b-b1) > 1e-3 or np.abs(g-g1) > 1e-3:
         count += 1
         a1,b1,g1 = a,b,g
         grada = (metric(projs, ion, euler_to_quaternion(a+da,b,g))-metric(projs, ion, euler_to_quaternion(a-da,b,g)))/(2*da)
