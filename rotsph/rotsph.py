@@ -1,4 +1,7 @@
 import numpy as np
+from pymatgen.io.vasp import Procar
+from pymatgen.electronic_structure.plotter import Spin
+
 # REF: J. Phys. Chem. 1996, 100, 15, 6342–6347
 
 #% build small u, v, w
@@ -350,11 +353,11 @@ def euler_to_matrix(a,b,g):
     Convert Euler angles (roll, pitch, yaw) in Body 3-2-1 sequence to a rotation matrix.
     
     Parameters:
-    roll : float
+    a : float
         Rotation angle around the x-axis in radians.
-    pitch : float
+    b : float
         Rotation angle around the y-axis in radians.
-    yaw : float
+    g : float
         Rotation angle around the z-axis in radians.
 
     Returns:
@@ -363,3 +366,228 @@ def euler_to_matrix(a,b,g):
         """
 
     return quaternion_to_matrix(*euler_to_quaternion(a,b,g))
+
+
+
+def metric(projs, ion, q):
+    """
+    Quantifies the suitabilty of an orientation. Smaller metric corresponds to a "better" orientation.
+    Parameter: 
+    q : np.array of size (4,1)
+        A quaternion, q, which parametrises the rotation.
+
+    Returns: 
+    float 
+        A value >= 1 where 1 is the metric of a completely diagonal system.
+    """
+    out = 0
+    #find rotation matrices for spherical harmonics / projectors
+    rot_mat = quaternion_to_matrix(*q)
+    pmat = get_R_mat(1,rot_mat.T)
+    dmat = get_R_mat(2,rot_mat.T)
+
+    total_projection = 0
+
+    nspins = len(projs)
+    nkpoints, nbands, nion, norbitals =  np.shape(projs[0])
+    #calculate metric - to be minimised
+    for s in range(nspins):
+        for k in np.linspace(0, nkpoints-1,min(7,nkpoints)):
+            k = int(k)
+            for b in range(nbands):
+                #rotate projectors
+                pin = projs[s][k,b,ion,1:4]
+                pout = np.square(np.abs(np.matmul(pmat, pin)))
+                ptot = sum(pout)
+
+                din = projs[s][k,b,ion,4:]
+                dout = np.square(np.abs(np.matmul(dmat, din)))
+                dtot = sum(dout)
+                total_projection += ptot + dtot
+
+            #increase output for off-diagonal terms
+            #define the specific function used for the metric (can be any concave function)
+                metfun = lambda x : np.sqrt(x)
+                if dtot >0:
+                    dout /= dtot
+                    for i in dout:
+                        out += metfun(i)*dtot
+                if ptot >0:
+                    pout /= ptot
+                    for i in pout:
+                        out += metfun(i)*ptot
+
+    #ideal metric would be 1.
+    #print(out/total_projection)
+    return out/(total_projection)
+
+
+def gradient_descent(projs, ion, a,b,g):
+    """
+    Performs gradient descent to find the rotation which locally minimises metric.
+    Parameters: 
+    projs : list of length nspins (1 or 2) of np.arrays of size [nkpoints, nbands, nions, norbitals]
+        Contains the complex projections of the wavefunction onto each atomic orbital.
+        Accessed as projs[spin][kpoint, band, ion, orbital]
+    ion : int
+        the ion onto which the metric should be minimised
+    Euler angles in Body 3-2-1 sequence:
+        a : float
+            Rotation angle around the x-axis in radians.
+        b : float
+            Rotation angle around the y-axis in radians.
+        g : float
+            Rotation angle around the z-axis in radians.
+    Returns: 
+    tuple
+        the euler angles a, b, g which minimise the metric 
+    """
+    print("Starting gradient descent")
+    grada, gradb, gradg = 200,200,200
+    eta = 0.1
+    da = 0.00001
+    db = 0.00001
+    dg = 0.00001
+    a1, b1, g1 = a+1,b+1,g+1
+
+    count = 0
+    while np.abs(a-a1) > 1e-4 or  np.abs(b-b1) > 1e-4 or np.abs(g-g1) > 1e-4:
+        count += 1
+        a1,b1,g1 = a,b,g
+        grada = (metric(projs, ion, euler_to_quaternion(a+da,b,g))-metric(projs, ion, euler_to_quaternion(a-da,b,g)))/(2*da)
+        a = a - grada*eta
+        gradb = (metric(projs, ion, euler_to_quaternion(a,b+db,g))-metric(projs, ion, euler_to_quaternion(a,b-db,g)))/(2*db)
+        b = b - gradb*eta
+        gradg = (metric(projs, ion, euler_to_quaternion(a,b,g+dg))-metric(projs, ion, euler_to_quaternion(a,b,g-dg)))/(2*dg)
+        g = g - gradg*eta
+        eta = eta/(1+0.01*count)
+    return a,b,g
+
+
+def write_procar(procar,a,b,g, fileout):
+    """
+    Writes a rotated Procar object to a PROCAR file at a specified location
+    Parameters: 
+    procar : pymatgen.io.vasp.Procar
+        The input projections, read from an input PROCAR file
+    Euler angles in Body 3-2-1 sequence:
+        a : float
+            Rotation angle around the x-axis in radians.
+        b : float
+            Rotation angle around the y-axis in radians.
+        g : float
+            Rotation angle around the z-axis in radians.
+    fileout : string
+        location to write file to
+    """
+
+    if procar.nspins == 1:
+        projs2 = [procar.data[Spin.up]]
+        phases = [procar.phase_factors[Spin.up]]
+    else:
+        projs2 = [procar.data[Spin.up], procar.data[Spin.down]]
+        phases = [procar.phase_factors[Spin.up], procar.phase_factors[Spin.down]]
+
+
+    #normalise phases
+    with np.nditer(phases[0], op_flags=['readwrite']) as it:
+        for x in it:
+            if np.abs(x) != 0 and not np.isnan(x):
+                x[...] = x/np.abs(x)
+    if procar.nspins == 2:
+        with np.nditer(phases[1], op_flags=['readwrite']) as it:
+            for x in it:
+                if np.abs(x) != 0 and not np.isnan(x):
+                    x[...] = x/np.abs(x)
+
+    #calculate complex projections as product of magnitude and phase
+    if procar.nspins == 1:
+        projs = [np.sqrt(projs2[0])*phases[0]]
+    else:
+        projs = [np.sqrt(projs2[0])*phases[0],np.sqrt(projs2[1])*phases[1]]
+
+
+    rot_mat = euler_to_matrix(a,b,g)
+    pmat = get_R_mat(1,rot_mat.T)
+    dmat = get_R_mat(2,rot_mat.T)
+    with open(fileout, "w") as w:
+        #check if interval is always correct
+        w.write("PROCAR lm decomposed + phase; opt. projector for intervall (eV)   -15.0000000    15.0000000\n")
+        for spin in range(procar.nspins):
+            w.write(f'# of k-points:  {procar.nkpoints}         # of bands:   {procar.nbands}         # of ions:    {procar.nions}\n')
+            for kpointwrite in range(procar.nkpoints):
+                w.write(f'\n k-point     {kpointwrite+1} :  {procar.kpoints[kpointwrite,0]} {procar.kpoints[kpointwrite,1]} {procar.kpoints[kpointwrite,2]}      weight = {procar.weights[kpointwrite]}\n\n')
+                for bandwrite in range(procar.nbands):
+                    tot = np.zeros(10)
+                    w.write(f'band      {bandwrite+1} # energy  {procar.eigenvalues[Spin.up if spin == 0 else Spin.down][kpointwrite,bandwrite]} # occ.   {np.abs(procar.occupancies[Spin.up if spin == 0 else Spin.down][kpointwrite,bandwrite])}\n')
+                    w.write("\nion      s     py     pz     px    dxy    dyz    dz2    dxz  x2-y2    tot\n")
+                    #store calculated projections so they do not need to be recalculated
+                    sout_list = []
+                    pout_list = []
+                    dout_list = []
+                    total_list = []
+                    for ion in range(procar.nions):
+                        s = projs[spin][kpointwrite,bandwrite,ion,0]
+                        pin = projs[spin][kpointwrite,bandwrite,ion,1:4]
+                        pout = np.matmul(pmat, pin)
+                        din = projs[spin][kpointwrite,bandwrite,ion,4:]
+                        dout = np.matmul(dmat, din)
+                        sout_list.append(s)
+                        pout_list.append(pout)
+                        dout_list.append(dout)
+                        s2 = np.abs(s)**2
+                        dout2 = np.round(np.abs(dout)**2,3)
+                        pout2 = np.round(np.abs(pout)**2,3)
+                        #total projection onto all orbitals for a given ion
+                        total = s2 + np.sum(pout2) + np.sum(dout2)
+                        total_list.append(total)
+                        #write square of projections
+                        tot[0] += s2
+
+                        tot[-1] += total
+                        poutstring = ''
+                        for i in range(3):
+                            poutstring = poutstring + "{:.3f}".format(pout2[i]) + "  "
+                            tot[1+i] += pout2[i]
+                        doutstring = ''
+                        for i in range(5):
+                            doutstring = doutstring + "{:.3f}".format(dout2[i]) + "  "
+                            tot[4+i] += dout2[i]
+
+                        out = ''.join(("   ", " "*(1-int((ion+1)/10)), str(ion+1), "  ","{:.3f}".format(s2), "  ", poutstring, doutstring, "{:.3f}".format(total), "\n"))
+                        w.write(out)
+                        if ion == procar.nions-1:
+                            out = 'tot    '
+                            for i in range(10):
+                                out += "{:.3f}".format(tot[i]) + "  "
+                            w.write((out+ "\n"))
+
+                            #write complex phases - normalised to the projection squared
+                            #I can't find what they are normalised to in the files outputted by VASP
+                    w.write("ion          s             py             pz             px             dxy            dyz            dz2            dxz          dx2-y2  \n")
+                    for ion in range(procar.nions):
+                        s = sout_list[ion]
+                        pout = pout_list[ion]
+                        dout = dout_list[ion]
+                        total = total_list[ion]
+                        #fixes formatting issue for s = 0 - 0j
+                        if s.imag == 0 and s.real == 0:
+                            s = 0
+                        sstring = " "*int(2+np.floor(0.5*np.sign(s.real))) + "{:.3f}".format(s.real) + " "*int(2+np.floor(0.5*np.sign(s.imag))) + "{:.3f}".format(s.imag)
+                        poutstring = ''
+                        for i in range(3):
+                            poutstring = poutstring + " "*int(3+np.floor(0.5*np.sign(pout[i].real))) + "{:.3f}".format(pout[i].real) + " "*int(2+np.floor(0.5*np.sign(pout[i].imag))) + "{:.3f}".format(pout[i].imag)
+                        doutstring = ''
+                        for i in range(5):
+                            doutstring = doutstring + " "*int(3+np.floor(0.5*np.sign(dout[i].real))) + "{:.3f}".format(dout[i].real) + " "*int(2+np.floor(0.5*np.sign(dout[i].imag))) + "{:.3f}".format(dout[i].imag)
+
+
+                        out = ''.join(("   ", " "*(1-int((ion+1)/10)), str(ion+1), sstring, poutstring, doutstring, "   ", "{:.3f}".format(total), "\n"))
+                        w.write(out)
+
+                        #can use totals calculated in the previous part
+                        if ion == procar.nions-1:
+                            out = 'charge '
+                            for i in range(10):
+                                out += "{:.3f}".format(tot[i]) + "          "
+                            w.write((out+ "\n\n"))
