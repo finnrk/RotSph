@@ -116,6 +116,18 @@ if len(sys.argv) > 3:
 else:
     z_angle_degree, y_angle_degree, x_angle_degree = 0,0,0
 
+
+#find fermi energy
+efermi_min = -1000000000
+efermi_max = 1000000000
+for k in range(np.shape(bnd_occ)[0]):
+    for b in range(np.shape(bnd_occ)[1]):
+        if bnd_occ[k,b] > 0.5 and bnd_energy[k,b] > efermi_min:
+            efermi_min =  bnd_energy[k,b]
+        elif bnd_occ[k,b] < 0.5 and bnd_energy[k,b] < efermi_max:
+            efermi_max = bnd_energy[k,b]
+efermi = (efermi_max + efermi_min)/2
+
 #---------------------------------------
 # generate transformation matrix
 #---------------------------------------
@@ -181,8 +193,8 @@ import matplotlib.pyplot as plt
 fig,ax = plt.subplots(figsize=(1.8,3.5))
 
 for ibnd in range(len(bnd_energy[0])):
-    ax.plot(kpath,bnd_energy[:,ibnd],'k-')
-    ax.scatter(kpath,bnd_energy[:,ibnd],s=weight_rotated[:,ibnd].real*50,c="red")
+    ax.plot(kpath,bnd_energy[:,ibnd]-efermi,'k-')
+    ax.scatter(kpath,bnd_energy[:,ibnd]-efermi,s=weight_rotated[:,ibnd].real*50,c="red")
     for high_symmetry_point in kpath[::30]:
         ax.axvline(x=high_symmetry_point,color='gray',linestyle='--')
     ax.set_xticks(kpath[::30])
