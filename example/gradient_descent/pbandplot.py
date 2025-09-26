@@ -201,7 +201,7 @@ for ibnd in range(len(bnd_energy[0])):
     ax.set_xticklabels([])
     ax.set_ylabel('Energy [eV]')
     ax.set_xlim([0,kpath[-1]])
-    ax.set_ylim([-2,12])
+    ax.set_ylim([-5.5,8])
 
 plt.savefig(f'band{orbital}.png',bbox_inches='tight',dpi=300)
 
