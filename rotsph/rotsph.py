@@ -442,7 +442,6 @@ def gradient_descent(projs, ion, a,b,g):
     tuple
         the euler angles a, b, g which minimise the metric 
     """
-    print("Starting gradient descent")
     grada, gradb, gradg = 200,200,200
     eta = 0.1
     da = 0.00001

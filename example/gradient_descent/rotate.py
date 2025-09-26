@@ -2,7 +2,7 @@ from pymatgen.io.vasp import Procar
 from pymatgen.electronic_structure.plotter import Spin
 import numpy as np
 import rotsph
-from multiprocessing import Pool
+import  multiprocessing
 import sys
 
 
@@ -70,12 +70,14 @@ normalisedqs = [np.array(unnormalisedqs[:, i])/np.linalg.norm(unnormalisedqs[:, 
 
 
 #evaluating the metric corresponding to each quaternion using multithreading
-with Pool(20) as pool:
+num_threads = max(multiprocessing.cpu_count(), 4)
+with multiprocessing.Pool(num_threads) as pool:
     metric_list = pool.map(metric_1_param, normalisedqs)
 
 #sort quaternions by their metric
-normalisedqs = [x for _, x in sorted(zip(metric_list, normalisedqs)) ]
+normalisedqs = [x for _, x in sorted(zip(metric_list, normalisedqs)) ]  
 
+print(f"Starting gradient descent using {num_threads} threads")
 #must create 1-parameter version of metric for use in multithreading
 def gradient_descent_1_param(q):
     a,b,g = rotsph.quaternion_to_euler(*q)
@@ -83,12 +85,12 @@ def gradient_descent_1_param(q):
 
 
 #do gradient descent on the orientations with the 6 smallest metrics 
-with Pool(6) as pool:
-    metric_list_optimised = pool.map(gradient_descent_1_param, normalisedqs[:6])
+with multiprocessing.Pool(num_threads) as pool:
+    metric_list_optimised = pool.map(gradient_descent_1_param, normalisedqs[:num_threads])
 
 #find which of the gradien-descended orientations has the smallest metric
 minmet = 1000000
-for i in range(6):
+for i in range(num_threads):
     a,b,g = metric_list_optimised[i]
     # [w,x,y,z] = rotsph.euler_to_quaternion(a,b,g)
     # a,b,g = rotsph.quaternion_to_euler(-w,x,y,z)
